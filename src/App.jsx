@@ -3,13 +3,18 @@ import Navbar from './components/Navbar'
 import Dashboard from './components/Dashboard'
 import Transactions from './components/Transactions'
 import Insights from './components/Insights'
+import Goals from './components/Goals'
 import TransactionModal from './components/TransactionModal'
+import CommandPalette from './components/CommandPalette'
+import KeyboardShortcuts from './components/KeyboardShortcuts'
+import ToastContainer from './components/ToastContainer'
 import { AnimatePresence, motion } from 'framer-motion'
 
 const pages = {
   dashboard: Dashboard,
   transactions: Transactions,
   insights: Insights,
+  goals: Goals,
 }
 
 export default function App() {
@@ -38,6 +43,9 @@ export default function App() {
         </AnimatePresence>
       </main>
       <TransactionModal />
+      <CommandPalette />
+      <KeyboardShortcuts />
+      <ToastContainer />
     </div>
   )
 }

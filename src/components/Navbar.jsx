@@ -3,10 +3,12 @@ import {
   LayoutDashboard,
   ArrowLeftRight,
   TrendingUp,
+  Target,
   Sun,
   Moon,
   Menu,
   X,
+  Command,
 } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -15,6 +17,7 @@ const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'transactions', label: 'Transactions', icon: ArrowLeftRight },
   { id: 'insights', label: 'Insights', icon: TrendingUp },
+  { id: 'goals', label: 'Goals', icon: Target },
 ]
 
 export default function Navbar() {
@@ -71,6 +74,19 @@ export default function Navbar() {
 
           {/* Right Controls */}
           <div className="flex items-center gap-2">
+            {/* Command Palette Trigger */}
+            <button
+              onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }))}
+              className={`hidden sm:flex items-center gap-1.5 px-2 py-1 rounded border text-xs font-mono transition-colors ${
+                isDark
+                  ? 'border-terminal-border text-terminal-muted hover:text-terminal-text hover:bg-terminal-card'
+                  : 'border-light-border text-light-muted hover:text-light-text hover:bg-light-bg'
+              }`}
+            >
+              <Command size={12} />
+              <span>K</span>
+            </button>
+
             {/* Role Switcher */}
             <select
               value={role}

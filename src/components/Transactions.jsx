@@ -12,6 +12,7 @@ import {
   Download,
 } from 'lucide-react'
 import { allCategories } from '../data/mockData'
+import { useToastStore } from './ToastContainer'
 
 function formatCurrency(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
@@ -98,6 +99,7 @@ export default function Transactions() {
     a.download = 'transactions.csv'
     a.click()
     URL.revokeObjectURL(url)
+    useToastStore.getState().addToast(`Exported ${sorted.length} transactions to CSV`, 'info')
   }
 
   const inputClass = `text-sm px-3 py-1.5 rounded border outline-none ${
@@ -334,7 +336,10 @@ export default function Transactions() {
                               <Pencil size={14} />
                             </button>
                             <button
-                              onClick={() => deleteTransaction(t.id)}
+                              onClick={() => {
+                                deleteTransaction(t.id)
+                                useToastStore.getState().addToast(`Deleted "${t.description}"`, 'warning')
+                              }}
                               className={`p-1 rounded transition-colors ${
                                 isDark
                                   ? 'text-terminal-muted hover:text-terminal-red hover:bg-terminal-surface'

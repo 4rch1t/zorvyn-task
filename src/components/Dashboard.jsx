@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import BalanceChart from './charts/BalanceChart'
 import SpendingPieChart from './charts/SpendingPieChart'
+import SpendingHeatmap from './charts/SpendingHeatmap'
 import { recurringBills } from '../data/mockData'
 
 function formatCurrency(n) {
@@ -211,6 +212,22 @@ export default function Dashboard() {
           </h2>
           <SpendingPieChart />
         </div>
+      </div>
+
+      {/* Spending Heatmap */}
+      <div
+        className={`p-4 rounded border ${
+          isDark ? 'bg-terminal-card border-terminal-border' : 'bg-light-card border-light-border shadow-sm'
+        }`}
+      >
+        <h2
+          className={`text-sm font-mono uppercase tracking-wider mb-4 ${
+            isDark ? 'text-terminal-muted' : 'text-light-muted'
+          }`}
+        >
+          Spending Activity (last 12 weeks)
+        </h2>
+        <SpendingHeatmap />
       </div>
 
       {/* Budget + Upcoming Bills Row */}

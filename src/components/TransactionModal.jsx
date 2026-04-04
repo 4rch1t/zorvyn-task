@@ -3,6 +3,7 @@ import { useStore } from '../store/useStore'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { allCategories } from '../data/mockData'
+import { useToastStore } from './ToastContainer'
 
 export default function TransactionModal() {
   const {
@@ -70,8 +71,10 @@ export default function TransactionModal() {
 
     if (editingTransaction) {
       updateTransaction(editingTransaction.id, data)
+      useToastStore.getState().addToast(`Updated "${data.description}"`, 'success')
     } else {
       addTransaction(data)
+      useToastStore.getState().addToast(`Added "${data.description}"`, 'success')
     }
     closeModal()
   }
