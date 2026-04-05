@@ -40,12 +40,12 @@ export default function Navbar() {
             <div className={`w-8 h-8 rounded-md flex items-center justify-center font-display font-[700] text-sm ${
               isDark ? 'bg-z-surface text-z-accent-bright' : 'bg-zl-elevated text-zl-accent-bright'
             }`}>
-              Z
+              C
             </div>
             <span className={`font-display font-bold text-[15px] tracking-[-0.03em] ${
               isDark ? 'text-z-text' : 'text-zl-text'
             }`}>
-              Zorvyn
+              Centra
             </span>
           </div>
 
