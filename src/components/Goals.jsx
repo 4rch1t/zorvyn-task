@@ -17,11 +17,11 @@ function formatCurrency(n) {
 
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.03 } },
 }
 const fadeUp = {
-  hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.25 } },
 }
 
 function ProgressRing({ pct, size = 80, stroke = 5, isDark }) {
@@ -30,20 +30,19 @@ function ProgressRing({ pct, size = 80, stroke = 5, isDark }) {
   const capped = Math.min(pct, 100)
   const color =
     capped >= 100
-      ? isDark ? '#34d399' : '#059669'
-      : isDark ? '#a78bfa' : '#7c3aed'
+      ? isDark ? '#22c55e' : '#16a34a'
+      : isDark ? '#f59e0b' : '#b45309'
 
   return (
     <svg width={size} height={size} className="transform -rotate-90">
       <circle cx={size/2} cy={size/2} r={radius} fill="none"
-        stroke={isDark ? '#16161f' : '#f4f4f8'} strokeWidth={stroke} />
+        stroke={isDark ? '#1c1c1e' : '#edede8'} strokeWidth={stroke} />
       <motion.circle cx={size/2} cy={size/2} r={radius} fill="none"
         stroke={color} strokeWidth={stroke} strokeLinecap="round"
         strokeDasharray={circ}
         initial={{ strokeDashoffset: circ }}
         animate={{ strokeDashoffset: circ - (circ * capped) / 100 }}
-        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        style={{ filter: `drop-shadow(0 0 6px ${color}99)` }}
+        transition={{ duration: 0.6 }}
       />
     </svg>
   )
@@ -97,10 +96,10 @@ export default function Goals() {
       {/* Hero */}
       <section className="px-6 md:px-10 lg:px-16 mb-12">
         <motion.p variants={fadeUp} className={`text-lg mb-4 ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
-          Track your <span className="accent-word">savings</span> targets.
+          {formatCurrency(totalSaved)} saved of {formatCurrency(totalTarget)}.
         </motion.p>
         <motion.div variants={fadeUp} className="flex items-end justify-between flex-wrap gap-4">
-          <h1 className={`font-display font-[800] text-4xl sm:text-5xl md:text-6xl tracking-[-0.03em] ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
+          <h1 className={`font-display font-[700] text-4xl sm:text-5xl md:text-6xl tracking-[-0.03em] ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
             Goals
           </h1>
           {isAdmin && (
@@ -113,7 +112,7 @@ export default function Goals() {
 
       {/* Stat strip */}
       <motion.section variants={fadeUp} className="px-6 md:px-10 lg:px-16 mb-14">
-        <div className="glass rounded-2xl overflow-hidden">
+        <div className="glass rounded-lg overflow-hidden">
           <div className="grid grid-cols-3">
             {[
               { label: 'Total Target', value: formatCurrency(totalTarget) },
@@ -143,7 +142,7 @@ export default function Goals() {
                 <motion.div key={goal.id} layout
                   variants={fadeUp}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="glass card-lift rounded-2xl p-6"
+                  className="glass card-lift rounded-lg p-6"
                 >
                   <div className="flex items-start gap-4">
                     <div className="relative shrink-0">

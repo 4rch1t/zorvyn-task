@@ -24,7 +24,6 @@ function getGreeting() {
   return 'Good evening'
 }
 
-/* Animated counter that counts up on mount */
 function AnimatedNumber({ value, format = 'currency' }) {
   const spring = useSpring(0, { stiffness: 60, damping: 20 })
   const [display, setDisplay] = useState({ dollars: '$0', cents: '.00' })
@@ -61,12 +60,12 @@ function AnimatedNumber({ value, format = 'currency' }) {
 
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.03 } },
 }
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.25 } },
 }
 
 export default function Dashboard() {
@@ -124,16 +123,13 @@ export default function Dashboard() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
 
-      {/* ══════ HERO SECTION ══════ */}
       <section className="px-6 md:px-10 lg:px-16 min-h-[40vh] flex flex-col justify-center mb-8">
-        {/* Greeting */}
         <motion.p variants={fadeUp} className={`text-lg mb-6 ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
-          {getGreeting()}. Your <span className="accent-word">finances</span> at a glance.
+          {getGreeting()}
         </motion.p>
 
-        {/* Giant balance — Tuyo "$18,727.02" treatment */}
         <motion.h1 variants={fadeUp}
-          className={`font-display font-[800] tracking-[-0.04em] leading-[0.95] mb-6 ${
+          className={`font-display font-[700] tracking-[-0.04em] leading-[0.95] mb-6 ${
             isDark ? 'text-z-text' : 'text-zl-text'
           }`}
           style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)' }}
@@ -143,16 +139,14 @@ export default function Dashboard() {
           </span>
         </motion.h1>
 
-        {/* Summary line */}
         <motion.p variants={fadeUp} className={`text-base max-w-xl leading-relaxed ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
           {now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} &mdash;{' '}
-          {stats.savingsRate >= 20 ? 'Consistent saving this month.' : 'Room to improve your savings rate.'}
+          {stats.savingsRate >= 20 ? `Saving ${stats.savingsRate.toFixed(0)}% of income.` : `Savings rate at ${stats.savingsRate.toFixed(0)}%.`}
         </motion.p>
       </section>
 
-      {/* ══════ STAT STRIP ══════ */}
       <motion.section variants={fadeUp} className="px-6 md:px-10 lg:px-16 mb-16">
-        <div className="glass rounded-2xl overflow-hidden">
+        <div className="glass rounded-lg overflow-hidden">
           <div className="grid grid-cols-2 lg:grid-cols-4">
             {statCards.map((card) => (
               <div key={card.label} className="stat-card px-5 py-7 md:px-6 md:py-8">
@@ -178,44 +172,41 @@ export default function Dashboard() {
         </div>
       </motion.section>
 
-      {/* ══════ CHARTS — asymmetric 3/5 + 2/5 ══════ */}
       <section className="px-6 md:px-10 lg:px-16 mb-12 space-y-6">
         <motion.div variants={fadeUp}>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            <div className="lg:col-span-3 glass rounded-2xl p-6 md:p-8">
+            <div className="lg:col-span-3 glass rounded-lg p-6 md:p-8">
               <div className="flex items-center justify-between mb-6">
                 <h2 className={`text-xs uppercase tracking-[0.15em] font-medium ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-                  Balance <span className="accent-word">Trend</span>
+                  Balance Trend
                 </h2>
                 <span className={`text-xs font-mono ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>6 months</span>
               </div>
               <BalanceChart />
             </div>
-            <div className="lg:col-span-2 glass rounded-2xl p-6 md:p-8">
+            <div className="lg:col-span-2 glass rounded-lg p-6 md:p-8">
               <h2 className={`text-xs uppercase tracking-[0.15em] font-medium mb-6 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-                Spending <span className="accent-word">Breakdown</span>
+                Spending by Category
               </h2>
               <SpendingPieChart />
             </div>
           </div>
         </motion.div>
 
-        <motion.div variants={fadeUp} className="glass rounded-2xl p-6 md:p-8">
+        <motion.div variants={fadeUp} className="glass rounded-lg p-6 md:p-8">
           <h2 className={`text-xs uppercase tracking-[0.15em] font-medium mb-6 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-            Spending <span className="accent-word">Activity</span>
+            Daily Activity
           </h2>
           <SpendingHeatmap />
         </motion.div>
       </section>
 
-      {/* ══════ BUDGET + BILLS ══════ */}
       <section className="px-6 md:px-10 lg:px-16 mb-12">
         <motion.div variants={fadeUp}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Budget */}
-            <div className="glass rounded-2xl p-6 md:p-8">
+            <div className="glass rounded-lg p-6 md:p-8">
               <h2 className={`text-xs uppercase tracking-[0.15em] font-medium mb-8 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-                Budget vs. <span className="accent-word">Actual</span>
+                Budget vs. Actual
               </h2>
               <div className="space-y-5">
                 {budgetEntries.map(({ category, limit, spent, pct }) => {
@@ -235,7 +226,7 @@ export default function Dashboard() {
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${Math.min(pct, 100)}%` }}
-                          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                          transition={{ duration: 0.5 }}
                           className={`h-full rounded-full ${
                             over
                               ? isDark ? 'bg-z-red' : 'bg-zl-red'
@@ -251,11 +242,10 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Upcoming Bills */}
-            <div className="glass rounded-2xl p-6 md:p-8">
+            <div className="glass rounded-lg p-6 md:p-8">
               <div className="flex items-center justify-between mb-8">
                 <h2 className={`text-xs uppercase tracking-[0.15em] font-medium ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-                  Upcoming <span className="accent-word">Bills</span>
+                  Upcoming Bills
                 </h2>
                 <span className={`text-xs font-mono ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
                   {formatCurrency(totalUpcoming)} due
@@ -294,7 +284,6 @@ export default function Dashboard() {
         </motion.div>
       </section>
 
-      {/* ══════ QUICK NAV CARDS ══════ */}
       <section className="px-6 md:px-10 lg:px-16 mb-16">
         <motion.div variants={fadeUp}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -305,7 +294,7 @@ export default function Dashboard() {
               <button
                 key={item.page}
                 onClick={() => setActivePage(item.page)}
-                className="glass card-lift rounded-2xl p-6 flex items-end justify-between text-left group"
+                className="glass card-lift rounded-lg p-6 flex items-end justify-between text-left group"
               >
                 <div>
                   <p className={`text-[10px] uppercase tracking-[0.15em] mb-2 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>{item.sub}</p>

@@ -34,12 +34,10 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Fixed top bar — Tuyo-style frosted */}
       <header className="fixed top-0 left-0 right-0 z-50 nav-bar">
         <div className="flex items-center justify-between px-6 md:px-10 h-16">
-          {/* Brand */}
           <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-display font-[900] text-sm ${
+            <div className={`w-8 h-8 rounded-md flex items-center justify-center font-display font-[700] text-sm ${
               isDark ? 'bg-z-surface text-z-accent-bright' : 'bg-zl-elevated text-zl-accent-bright'
             }`}>
               Z
@@ -115,7 +113,7 @@ export default function Navbar() {
             {/* Menu pill — for mobile + overflow */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="menu-pill flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer"
+              className="menu-pill flex items-center gap-2 px-4 py-2 rounded-md cursor-pointer"
             >
               <motion.div animate={{ rotate: menuOpen ? 90 : 0 }} transition={{ duration: 0.15 }}>
                 {menuOpen

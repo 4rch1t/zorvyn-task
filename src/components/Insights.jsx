@@ -18,11 +18,11 @@ function formatCurrency(n) {
 
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.03 } },
 }
 const fadeUp = {
-  hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.25 } },
 }
 
 function Recommendation({ text, type, isDark }) {
@@ -131,20 +131,20 @@ export default function Insights() {
       {/* Hero */}
       <section className="px-6 md:px-10 lg:px-16 mb-12">
         <motion.p variants={fadeUp} className={`text-lg mb-4 ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
-          Patterns and <span className="accent-word">recommendations</span>.
+          Spending patterns this month.
         </motion.p>
         <motion.h1 variants={fadeUp}
-          className={`font-display font-[800] text-4xl sm:text-5xl md:text-6xl tracking-[-0.03em] mb-3 ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
+          className={`font-display font-[700] text-4xl sm:text-5xl md:text-6xl tracking-[-0.03em] mb-3 ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
           Insights
         </motion.h1>
         <motion.p variants={fadeUp} className={`text-sm ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
-          Automated analysis from your spending history.
+          Based on {transactions.length} transactions.
         </motion.p>
       </section>
 
       {/* Recommendations */}
       <motion.section variants={fadeUp} className="px-6 md:px-10 lg:px-16 mb-12">
-        <div className="glass rounded-2xl p-6 md:p-8 space-y-2">
+        <div className="glass rounded-lg p-6 md:p-8 space-y-2">
           <h2 className={`text-xs uppercase tracking-[0.15em] font-medium mb-4 flex items-center gap-2 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
             <Lightbulb size={14} /> Recommendations
           </h2>
@@ -160,7 +160,7 @@ export default function Insights() {
           {metricCards.map((card) => {
             const Icon = card.icon
             return (
-              <div key={card.label} className="glass card-lift rounded-2xl p-6">
+              <div key={card.label} className="glass card-lift rounded-lg p-6">
                 <div className="flex items-start gap-4">
                   <div className={`p-2.5 rounded-xl shrink-0 ${isDark ? 'bg-z-elevated' : 'bg-zl-elevated'}`}>
                     <Icon size={15} className={isDark ? 'text-z-accent-bright' : 'text-zl-accent-bright'} />
@@ -179,9 +179,9 @@ export default function Insights() {
 
       {/* Spending Breakdown */}
       <motion.section variants={fadeUp} className="px-6 md:px-10 lg:px-16 mb-16">
-        <div className="glass rounded-2xl p-6 md:p-8">
+        <div className="glass rounded-lg p-6 md:p-8">
           <h2 className={`text-xs uppercase tracking-[0.15em] font-medium mb-8 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-            All-time <span className="accent-word">Breakdown</span>
+            All-time Breakdown
           </h2>
           <div className="space-y-5">
             {insights.categoryBreakdown.map(([cat, total]) => {
@@ -198,7 +198,7 @@ export default function Insights() {
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${pct}%` }}
-                      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ duration: 0.5 }}
                       className="h-full rounded-full bar-fill"
                     />
                   </div>

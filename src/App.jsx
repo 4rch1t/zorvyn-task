@@ -18,9 +18,9 @@ const pages = {
 }
 
 const pageTransition = {
-  initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
-  exit: { opacity: 0, y: -12, transition: { duration: 0.25 } },
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.2 } },
+  exit: { opacity: 0, transition: { duration: 0.15 } },
 }
 
 export default function App() {
@@ -31,7 +31,6 @@ export default function App() {
   return (
     <div className={`min-h-screen ${isDark ? 'dark bg-z-bg' : 'light bg-zl-bg'}`}>
       <div className="ambient-bg" />
-      <div className="grid-bg" />
       <Navbar />
       <main className="relative z-10 pt-20 pb-16">
         <AnimatePresence mode="wait">

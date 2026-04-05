@@ -2,8 +2,8 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { useStore } from '../../store/useStore'
 
-const COLORS_DARK = ['#a78bfa', '#8b5cf6', '#60a5fa', '#34d399', '#fbbf24', '#fb7185']
-const COLORS_LIGHT = ['#7c3aed', '#6d28d9', '#2563eb', '#059669', '#d97706', '#e11d48']
+const COLORS_DARK = ['#f59e0b', '#d97706', '#3b82f6', '#22c55e', '#ef4444', '#8b5cf6']
+const COLORS_LIGHT = ['#b45309', '#92400e', '#2563eb', '#16a34a', '#dc2626', '#7c3aed']
 
 function formatCurrency(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
@@ -57,13 +57,13 @@ export default function SpendingPieChart() {
             </Pie>
             <Tooltip
               contentStyle={{
-                backgroundColor: isDark ? '#16161f' : '#f4f4f8',
-                border: `1px solid ${isDark ? 'rgba(139,92,246,0.2)' : 'rgba(0,0,0,0.08)'}`,
-                borderRadius: '12px',
-                boxShadow: isDark ? 'inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 24px rgba(0,0,0,0.5)' : '0 4px 16px rgba(0,0,0,0.08)',
-                fontFamily: "'JetBrains Mono', monospace",
+                backgroundColor: isDark ? '#1c1c1e' : '#edede8',
+                border: `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'}`,
+                borderRadius: '8px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 12,
-                color: isDark ? '#fafafa' : '#0f0f11',
+                color: isDark ? '#e8e8e6' : '#1a1a18',
               }}
               formatter={(value) => [`$${value.toLocaleString()}`]}
             />

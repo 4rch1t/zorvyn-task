@@ -20,12 +20,12 @@ function formatCurrency(n) {
 
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.03 } },
 }
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.25 } },
 }
 
 export default function Transactions() {
@@ -84,10 +84,10 @@ export default function Transactions() {
       {/* Hero */}
       <section className="px-6 md:px-10 lg:px-16 mb-10">
         <motion.p variants={fadeUp} className={`text-lg mb-4 ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
-          All <span className="accent-word">activity</span> in one place.
+          All <span className="accent-word">transactions</span>, searchable.
         </motion.p>
         <motion.h1 variants={fadeUp}
-          className={`font-display font-[800] text-4xl sm:text-5xl md:text-6xl tracking-[-0.03em] mb-3 ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
+          className={`font-display font-[700] text-4xl sm:text-5xl md:text-6xl tracking-[-0.03em] mb-3 ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
           Transactions
         </motion.h1>
         <motion.p variants={fadeUp} className={`text-sm font-mono ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
@@ -105,16 +105,16 @@ export default function Transactions() {
               placeholder="Search transactions..."
               value={filters.search}
               onChange={(e) => setFilter('search', e.target.value)}
-              className="input-field text-sm pl-9 pr-4 py-2.5 w-full rounded-full!"
+              className="input-field text-sm pl-9 pr-4 py-2.5 w-full"
             />
           </div>
           <select value={filters.category} onChange={(e) => setFilter('category', e.target.value)}
-            className="input-field text-sm px-4 py-2.5 rounded-full!">
+            className="input-field text-sm px-4 py-2.5">
             <option value="All">All Categories</option>
             {allCategories.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
           <select value={filters.type} onChange={(e) => setFilter('type', e.target.value)}
-            className="input-field text-sm px-4 py-2.5 rounded-full!">
+            className="input-field text-sm px-4 py-2.5">
             <option value="All">All Types</option>
             <option value="Income">Income</option>
             <option value="Expense">Expense</option>

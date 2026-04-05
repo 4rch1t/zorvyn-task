@@ -1,7 +1,3 @@
-// ── Realistic financial data for a software developer in Austin, TX ──
-// All transactions are hand-crafted to simulate 6 months of real life.
-// Recurring items (rent, salary, subscriptions) land on consistent dates.
-// One-off purchases and meals use real merchant names.
 
 export const allCategories = [
   'Housing',

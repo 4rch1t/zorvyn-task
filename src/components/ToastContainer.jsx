@@ -25,13 +25,13 @@ const icons = { success: CheckCircle2, warning: AlertTriangle, info: Info, error
 const accentsDark = {
   success: 'border-l-emerald-400 text-emerald-400',
   warning: 'border-l-amber-400 text-amber-400',
-  info: 'border-l-[#a78bfa] text-[#a78bfa]',
+  info: 'border-l-[#f59e0b] text-[#f59e0b]',
   error: 'border-l-red-400 text-red-400',
 }
 const accentsLight = {
   success: 'border-l-emerald-600 text-emerald-600',
   warning: 'border-l-amber-600 text-amber-600',
-  info: 'border-l-[#7c3aed] text-[#7c3aed]',
+  info: 'border-l-[#b45309] text-[#b45309]',
   error: 'border-l-red-600 text-red-600',
 }
 

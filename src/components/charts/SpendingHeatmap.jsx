@@ -1,6 +1,5 @@
 ﻿import { useMemo } from 'react'
 import { useStore } from '../../store/useStore'
-import { motion } from 'framer-motion'
 
 const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
@@ -15,19 +14,19 @@ function getIntensity(amount, max) {
 
 /* Color scale: z-elevated (zero) -> z-accent-bright (max) */
 const darkColors = [
-  'bg-[#16161f]',          // 0 — no spending
-  'bg-[#a78bfa]/20',       // 1
-  'bg-[#a78bfa]/40',       // 2
-  'bg-[#a78bfa]/70',       // 3
-  'bg-[#a78bfa]',          // 4
+  'bg-[#1c1c1e]',          // 0
+  'bg-[#f59e0b]/20',       // 1
+  'bg-[#f59e0b]/40',       // 2
+  'bg-[#f59e0b]/70',       // 3
+  'bg-[#f59e0b]',          // 4
 ]
 
 const lightColors = [
-  'bg-[#f4f4f8]',          // 0
-  'bg-[#7c3aed]/20',       // 1
-  'bg-[#7c3aed]/40',       // 2
-  'bg-[#7c3aed]/70',       // 3
-  'bg-[#7c3aed]',          // 4
+  'bg-[#edede8]',          // 0
+  'bg-[#b45309]/20',       // 1
+  'bg-[#b45309]/40',       // 2
+  'bg-[#b45309]/70',       // 3
+  'bg-[#b45309]',          // 4
 ]
 
 export default function SpendingHeatmap() {
@@ -122,11 +121,8 @@ export default function SpendingHeatmap() {
                 return <div key={dIdx} className="w-2.5 h-2.5 rounded-[3px] opacity-0" />
               const intensity = getIntensity(day.amount, maxDaily)
               return (
-                <motion.div
+                <div
                   key={dIdx}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: (wIdx * 7 + dIdx) * 0.003, duration: 0.15 }}
                   title={`${day.date}: $${day.amount.toFixed(0)}`}
                   className={`w-2.5 h-2.5 rounded-[3px] cursor-default ${colors[intensity]}`}
                 />
