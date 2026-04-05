@@ -15,19 +15,19 @@ function getIntensity(amount, max) {
 
 /* Color scale: z-elevated (zero) -> z-accent-bright (max) */
 const darkColors = [
-  'bg-[#161d2e]',          // 0 — no spending
-  'bg-[#89b4e0]/20',       // 1
-  'bg-[#89b4e0]/40',       // 2
-  'bg-[#89b4e0]/70',       // 3
-  'bg-[#89b4e0]',          // 4
+  'bg-[#16161f]',          // 0 — no spending
+  'bg-[#a78bfa]/20',       // 1
+  'bg-[#a78bfa]/40',       // 2
+  'bg-[#a78bfa]/70',       // 3
+  'bg-[#a78bfa]',          // 4
 ]
 
 const lightColors = [
-  'bg-[#f8f8f5]',          // 0
-  'bg-[#3d7ab5]/20',       // 1
-  'bg-[#3d7ab5]/40',       // 2
-  'bg-[#3d7ab5]/70',       // 3
-  'bg-[#3d7ab5]',          // 4
+  'bg-[#f4f4f8]',          // 0
+  'bg-[#7c3aed]/20',       // 1
+  'bg-[#7c3aed]/40',       // 2
+  'bg-[#7c3aed]/70',       // 3
+  'bg-[#7c3aed]',          // 4
 ]
 
 export default function SpendingHeatmap() {

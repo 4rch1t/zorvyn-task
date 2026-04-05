@@ -31,6 +31,7 @@ export default function App() {
   return (
     <div className={`min-h-screen ${isDark ? 'dark bg-z-bg' : 'light bg-zl-bg'}`}>
       <div className="ambient-bg" />
+      <div className="grid-bg" />
       <Navbar />
       <main className="relative z-10 pt-20 pb-16">
         <AnimatePresence mode="wait">

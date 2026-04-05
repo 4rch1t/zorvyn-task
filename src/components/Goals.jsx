@@ -30,13 +30,13 @@ function ProgressRing({ pct, size = 80, stroke = 5, isDark }) {
   const capped = Math.min(pct, 100)
   const color =
     capped >= 100
-      ? isDark ? '#4ade80' : '#16a34a'
-      : isDark ? '#89b4e0' : '#3d7ab5'
+      ? isDark ? '#34d399' : '#059669'
+      : isDark ? '#a78bfa' : '#7c3aed'
 
   return (
     <svg width={size} height={size} className="transform -rotate-90">
       <circle cx={size/2} cy={size/2} r={radius} fill="none"
-        stroke={isDark ? '#161d2e' : '#f8f8f5'} strokeWidth={stroke} />
+        stroke={isDark ? '#16161f' : '#f4f4f8'} strokeWidth={stroke} />
       <motion.circle cx={size/2} cy={size/2} r={radius} fill="none"
         stroke={color} strokeWidth={stroke} strokeLinecap="round"
         strokeDasharray={circ}

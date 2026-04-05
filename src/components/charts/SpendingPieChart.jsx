@@ -2,8 +2,8 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { useStore } from '../../store/useStore'
 
-const COLORS_DARK = ['#89b4e0', '#6b8db5', '#60a5fa', '#a78bfa', '#4ade80', '#fbbf24']
-const COLORS_LIGHT = ['#3d7ab5', '#4a6580', '#2563eb', '#7c3aed', '#16a34a', '#d97706']
+const COLORS_DARK = ['#a78bfa', '#8b5cf6', '#60a5fa', '#34d399', '#fbbf24', '#fb7185']
+const COLORS_LIGHT = ['#7c3aed', '#6d28d9', '#2563eb', '#059669', '#d97706', '#e11d48']
 
 function formatCurrency(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
@@ -57,13 +57,13 @@ export default function SpendingPieChart() {
             </Pie>
             <Tooltip
               contentStyle={{
-                backgroundColor: isDark ? '#161d2e' : '#f8f8f5',
-                border: `1px solid ${isDark ? 'rgba(107,141,181,0.25)' : 'rgba(0,0,0,0.08)'}`,
+                backgroundColor: isDark ? '#16161f' : '#f4f4f8',
+                border: `1px solid ${isDark ? 'rgba(139,92,246,0.2)' : 'rgba(0,0,0,0.08)'}`,
                 borderRadius: '12px',
-                boxShadow: isDark ? 'inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 24px rgba(0,0,0,0.5)' : '0 4px 16px rgba(0,0,0,0.08)',
+                boxShadow: isDark ? 'inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 24px rgba(0,0,0,0.5)' : '0 4px 16px rgba(0,0,0,0.08)',
                 fontFamily: "'JetBrains Mono', monospace",
                 fontSize: 12,
-                color: isDark ? '#f5f5f2' : '#1a1a2e',
+                color: isDark ? '#fafafa' : '#0f0f11',
               }}
               formatter={(value) => [`$${value.toLocaleString()}`]}
             />

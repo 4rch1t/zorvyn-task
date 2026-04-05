@@ -1,6 +1,6 @@
-﻿import { useMemo, useEffect, useState, useRef } from 'react'
+﻿import { useMemo, useEffect, useState, useRef, useCallback } from 'react'
 import { useStore } from '../store/useStore'
-import { motion, useSpring, useTransform } from 'framer-motion'
+import { motion, useSpring } from 'framer-motion'
 import {
   CalendarClock,
   AlertCircle,
@@ -27,7 +27,9 @@ function getGreeting() {
 /* Animated counter that counts up on mount */
 function AnimatedNumber({ value, format = 'currency' }) {
   const spring = useSpring(0, { stiffness: 60, damping: 20 })
-  const displayed = useTransform(spring, (v) => {
+  const [display, setDisplay] = useState({ dollars: '$0', cents: '.00' })
+
+  const formatValue = useCallback((v) => {
     if (format === 'currency') {
       const abs = Math.abs(v)
       const dollars = Math.floor(abs)
@@ -36,14 +38,16 @@ function AnimatedNumber({ value, format = 'currency' }) {
       return { dollars: `${sign}$${dollars.toLocaleString()}`, cents: `.${cents}` }
     }
     return { dollars: `${v.toFixed(1)}%`, cents: '' }
-  })
-  const [display, setDisplay] = useState({ dollars: '$0', cents: '.00' })
+  }, [format])
 
   useEffect(() => {
     spring.set(value)
-    const unsub = displayed.on('change', setDisplay)
+  }, [value, spring])
+
+  useEffect(() => {
+    const unsub = spring.on('change', (v) => setDisplay(formatValue(v)))
     return unsub
-  }, [value, spring, displayed])
+  }, [spring, formatValue])
 
   return (
     <span>

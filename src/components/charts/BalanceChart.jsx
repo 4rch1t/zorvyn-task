@@ -37,9 +37,9 @@ export default function BalanceChart() {
     })
   }, [transactions])
 
-  const accent = isDark ? '#89b4e0' : '#3d7ab5'
+  const accent = isDark ? '#a78bfa' : '#7c3aed'
   const grid = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.06)'
-  const textColor = isDark ? '#4a5568' : '#6b7280'
+  const textColor = isDark ? '#52525b' : '#71717a'
 
   return (
     <ResponsiveContainer width="100%" height={260}>
@@ -65,13 +65,13 @@ export default function BalanceChart() {
         />
         <Tooltip
           contentStyle={{
-            backgroundColor: isDark ? '#161d2e' : '#f8f8f5',
-            border: `1px solid ${isDark ? 'rgba(107,141,181,0.25)' : 'rgba(0,0,0,0.08)'}`,
+            backgroundColor: isDark ? '#16161f' : '#f4f4f8',
+            border: `1px solid ${isDark ? 'rgba(139,92,246,0.2)' : 'rgba(0,0,0,0.08)'}`,
             borderRadius: '12px',
-            boxShadow: isDark ? 'inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 24px rgba(0,0,0,0.5)' : '0 4px 16px rgba(0,0,0,0.08)',
+            boxShadow: isDark ? 'inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 24px rgba(0,0,0,0.5)' : '0 4px 16px rgba(0,0,0,0.08)',
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: 12,
-            color: isDark ? '#f5f5f2' : '#1a1a2e',
+            color: isDark ? '#fafafa' : '#0f0f11',
           }}
           formatter={(value) => [`$${value.toLocaleString()}`, 'Balance']}
         />
