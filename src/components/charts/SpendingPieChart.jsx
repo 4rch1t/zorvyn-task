@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { useStore } from '../../store/useStore'
 
-const COLORS_DARK = ['#f97316', '#fbbf24', '#60a5fa', '#a78bfa', '#34d399', '#f87171']
-const COLORS_LIGHT = ['#ea580c', '#d97706', '#2563eb', '#7c3aed', '#059669', '#dc2626']
+const COLORS_DARK = ['#6b8db5', '#94b8d4', '#60a5fa', '#a78bfa', '#4ade80', '#fbbf24']
+const COLORS_LIGHT = ['#4a6580', '#6b8db5', '#2563eb', '#7c3aed', '#16a34a', '#d97706']
 
 export default function SpendingPieChart() {
   const { transactions, theme } = useStore()
@@ -50,9 +50,9 @@ export default function SpendingPieChart() {
           </Pie>
           <Tooltip
             contentStyle={{
-              backgroundColor: isDark ? '#1a1a26' : '#ffffff',
-              border: `1px solid ${isDark ? '#2a2a3a' : '#e0e0e5'}`,
-              borderRadius: '6px',
+              backgroundColor: isDark ? 'rgba(7,11,20,0.9)' : 'rgba(250,250,248,0.95)',
+              border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+              borderRadius: '12px',
               fontFamily: 'monospace',
               fontSize: 12,
               color: isDark ? '#e0e0e8' : '#1a1a2e',

@@ -41,10 +41,10 @@ export default function BalanceChart() {
     })
   }, [transactions])
 
-  const accent = isDark ? '#f97316' : '#ea580c'
-  const accentDim = isDark ? '#f9731630' : '#ea580c30'
+  const accent = isDark ? '#6b8db5' : '#4a6580'
+  const accentDim = isDark ? '#6b8db530' : '#4a658030'
   const grid = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'
-  const textColor = isDark ? '#6a6a80' : '#6b7280'
+  const textColor = isDark ? '#4a5568' : '#6b7280'
 
   return (
     <ResponsiveContainer width="100%" height={260}>
@@ -70,7 +70,7 @@ export default function BalanceChart() {
         />
         <Tooltip
           contentStyle={{
-            backgroundColor: isDark ? 'rgba(20,20,24,0.9)' : 'rgba(255,255,255,0.95)',
+            backgroundColor: isDark ? 'rgba(7,11,20,0.9)' : 'rgba(250,250,248,0.95)',
             border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
             borderRadius: '12px',
             backdropFilter: 'blur(12px)',

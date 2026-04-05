@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+﻿import { useMemo } from 'react'
 import { useStore } from '../store/useStore'
 import { motion } from 'framer-motion'
 import {
@@ -8,6 +8,7 @@ import {
   PiggyBank,
   CalendarClock,
   AlertCircle,
+  ArrowRight,
 } from 'lucide-react'
 import BalanceChart from './charts/BalanceChart'
 import SpendingPieChart from './charts/SpendingPieChart'
@@ -25,45 +26,17 @@ function getGreeting() {
   return 'Good evening'
 }
 
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.06 } },
-}
 const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] } },
-}
-
-function SummaryCard({ icon: Icon, label, value, subtext, stripe, isDark }) {
-  return (
-    <motion.div
-      variants={fadeUp}
-      className={`glass card-glow accent-stripe ${stripe} rounded-2xl p-5 pl-6`}
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div className={`p-2 rounded-xl ${isDark ? 'bg-white/5' : 'bg-black/5'}`}>
-          <Icon size={16} className={isDark ? 'text-z-muted' : 'text-zl-muted'} />
-        </div>
-      </div>
-      <p className={`text-[11px] uppercase tracking-widest font-medium mb-1 ${
-        isDark ? 'text-z-muted' : 'text-zl-muted'
-      }`}>
-        {label}
-      </p>
-      <p className={`text-2xl font-mono font-bold tracking-tight ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
-        {value}
-      </p>
-      {subtext && (
-        <p className={`text-xs mt-1 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-          {subtext}
-        </p>
-      )}
-    </motion.div>
-  )
+  hidden: { opacity: 0, y: 30 },
+  show: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, delay: i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] },
+  }),
 }
 
 export default function Dashboard() {
-  const { transactions, budgets, theme } = useStore()
+  const { transactions, budgets, theme, setActivePage } = useStore()
   const isDark = theme === 'dark'
 
   const now = new Date()
@@ -80,11 +53,9 @@ export default function Dashboard() {
     const thisMonthIncome = thisMonth.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0)
     const thisMonthExpenses = thisMonth.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
     const lastMonthExpenses = lastMonth.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
-
     const expenseChange = lastMonthExpenses > 0
       ? ((thisMonthExpenses - lastMonthExpenses) / lastMonthExpenses) * 100
       : 0
-
     const categorySpending = {}
     thisMonth.filter((t) => t.type === 'expense').forEach((t) => {
       categorySpending[t.category] = (categorySpending[t.category] || 0) + t.amount
@@ -110,35 +81,11 @@ export default function Dashboard() {
 
   const totalUpcoming = upcomingBills.reduce((s, b) => s + b.amount, 0)
 
-  const cards = [
-    {
-      icon: Wallet,
-      label: 'Net Balance',
-      value: formatCurrency(stats.totalBalance),
-      subtext: 'All time',
-      stripe: 'stripe-orange',
-    },
-    {
-      icon: TrendingUp,
-      label: 'Income This Month',
-      value: formatCurrency(stats.thisMonthIncome),
-      subtext: now.toLocaleDateString('en-US', { month: 'long' }),
-      stripe: 'stripe-green',
-    },
-    {
-      icon: TrendingDown,
-      label: 'Spent This Month',
-      value: formatCurrency(stats.thisMonthExpenses),
-      subtext: `${stats.expenseChange >= 0 ? '+' : ''}${stats.expenseChange.toFixed(1)}% vs last month`,
-      stripe: 'stripe-red',
-    },
-    {
-      icon: PiggyBank,
-      label: 'Savings Rate',
-      value: `${stats.savingsRate.toFixed(1)}%`,
-      subtext: stats.savingsRate >= 20 ? 'On track' : 'Below 20% target',
-      stripe: 'stripe-amber',
-    },
+  const statCards = [
+    { label: 'Net Balance', value: formatCurrency(stats.totalBalance), sub: 'All time' },
+    { label: 'Income', value: formatCurrency(stats.thisMonthIncome), sub: now.toLocaleDateString('en-US', { month: 'long' }) },
+    { label: 'Spending', value: formatCurrency(stats.thisMonthExpenses), sub: `${stats.expenseChange >= 0 ? '+' : ''}${stats.expenseChange.toFixed(1)}% MoM` },
+    { label: 'Savings Rate', value: `${stats.savingsRate.toFixed(1)}%`, sub: stats.savingsRate >= 20 ? 'On track' : 'Below target' },
   ]
 
   const budgetEntries = Object.entries(budgets)
@@ -151,152 +98,234 @@ export default function Dashboard() {
     .sort((a, b) => b.pct - a.pct)
 
   return (
-    <motion.div className="space-y-6" variants={stagger} initial="hidden" animate="show">
-      {/* Greeting */}
-      <motion.div variants={fadeUp}>
-        <h1 className={`text-3xl font-bold tracking-tight ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
+    <div>
+      {/* ========== HERO SECTION ========== */}
+      <section className="px-6 md:px-10 lg:px-16 mb-16">
+        <motion.p
+          variants={fadeUp} custom={0} initial="hidden" animate="show"
+          className={`text-sm tracking-wide mb-4 flex items-center gap-2 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}
+        >
+          <span className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-z-accent' : 'bg-zl-accent'}`} />
           {getGreeting()}
-        </h1>
-        <p className={`text-sm mt-1 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-          Here's your financial snapshot for {now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}.
-        </p>
-      </motion.div>
+        </motion.p>
 
-      {/* Summary Cards – bento grid */}
-      <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" variants={stagger}>
-        {cards.map((card) => (
-          <SummaryCard key={card.label} {...card} isDark={isDark} />
-        ))}
-      </motion.div>
+        <motion.h1
+          variants={fadeUp} custom={1} initial="hidden" animate="show"
+          className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95] mb-6 ${
+            isDark ? 'text-z-text' : 'text-zl-text'
+          }`}
+        >
+          {formatCurrency(stats.totalBalance)}
+        </motion.h1>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <motion.div variants={fadeUp} className="lg:col-span-2 glass rounded-2xl p-5">
-          <h2 className={`text-[11px] uppercase tracking-widest font-medium mb-4 ${
-            isDark ? 'text-z-muted' : 'text-zl-muted'
-          }`}>
-            Balance Trend
-          </h2>
-          <BalanceChart />
-        </motion.div>
-        <motion.div variants={fadeUp} className="glass rounded-2xl p-5">
-          <h2 className={`text-[11px] uppercase tracking-widest font-medium mb-4 ${
-            isDark ? 'text-z-muted' : 'text-zl-muted'
-          }`}>
-            Where your money goes
-          </h2>
-          <SpendingPieChart />
-        </motion.div>
-      </div>
+        <motion.p
+          variants={fadeUp} custom={2} initial="hidden" animate="show"
+          className={`text-lg md:text-xl max-w-2xl leading-relaxed ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}
+        >
+          Your financial snapshot for {now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}.
+          {stats.savingsRate >= 20
+            ? ' You are saving consistently this month.'
+            : ' Consider reviewing your spending to improve your savings rate.'}
+        </motion.p>
+      </section>
 
-      {/* Spending Heatmap */}
-      <motion.div variants={fadeUp} className="glass rounded-2xl p-5">
-        <h2 className={`text-[11px] uppercase tracking-widest font-medium mb-4 ${
-          isDark ? 'text-z-muted' : 'text-zl-muted'
-        }`}>
-          Spending Activity
-        </h2>
-        <SpendingHeatmap />
-      </motion.div>
-
-      {/* Budget + Upcoming Bills */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Budget Tracker */}
-        <motion.div variants={fadeUp} className="glass rounded-2xl p-5">
-          <h2 className={`text-[11px] uppercase tracking-widest font-medium mb-5 ${
-            isDark ? 'text-z-muted' : 'text-zl-muted'
-          }`}>
-            Budget vs. Actual — {now.toLocaleDateString('en-US', { month: 'short' })}
-          </h2>
-          <div className="space-y-4">
-            {budgetEntries.map(({ category, limit, spent, pct }) => {
-              const over = pct > 100
-              const barColor = over
-                ? 'bg-z-red'
-                : pct > 75
-                ? 'bg-z-amber'
-                : 'bg-z-accent'
-              const barColorLight = over
-                ? 'bg-zl-red'
-                : pct > 75
-                ? 'bg-zl-amber'
-                : 'bg-zl-accent'
-              return (
-                <div key={category}>
-                  <div className="flex justify-between text-sm mb-1.5">
-                    <span className={`flex items-center gap-1.5 text-[13px] ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
-                      {category}
-                      {over && <AlertCircle size={12} className={isDark ? 'text-z-red' : 'text-zl-red'} />}
-                    </span>
-                    <span className={`font-mono text-xs ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-                      {formatCurrency(spent)} / {formatCurrency(limit)}
-                    </span>
-                  </div>
-                  <div className={`h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-white/5' : 'bg-black/5'}`}>
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${Math.min(pct, 100)}%` }}
-                      transition={{ duration: 0.8, ease: 'easeOut' }}
-                      className={`h-full rounded-full ${isDark ? barColor : barColorLight}`}
-                    />
-                  </div>
-                </div>
-              )
-            })}
+      {/* ========== STAT STRIP (Hark-inspired glass cards) ========== */}
+      <motion.section
+        variants={fadeUp} custom={3} initial="hidden" animate="show"
+        className="px-6 md:px-10 lg:px-16 mb-20"
+      >
+        <div className="glass rounded-2xl overflow-hidden">
+          <div className="grid grid-cols-2 lg:grid-cols-4">
+            {statCards.map((card, i) => (
+              <div key={card.label} className="stat-card px-6 py-8 md:py-10">
+                <p className={`text-2xl md:text-3xl font-bold tracking-tight mb-4 font-mono ${
+                  isDark ? 'text-z-text' : 'text-zl-text'
+                }`}>
+                  {card.value}
+                </p>
+                <div className={`w-8 h-px mb-3 ${isDark ? 'bg-white/10' : 'bg-black/10'}`} />
+                <p className={`text-sm ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
+                  {card.label}
+                </p>
+                <p className={`text-xs mt-0.5 ${isDark ? 'text-z-muted/60' : 'text-zl-muted/60'}`}>
+                  {card.sub}
+                </p>
+              </div>
+            ))}
           </div>
-        </motion.div>
+        </div>
+      </motion.section>
 
-        {/* Upcoming Bills */}
-        <motion.div variants={fadeUp} className="glass rounded-2xl p-5">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className={`text-[11px] uppercase tracking-widest font-medium ${
-              isDark ? 'text-z-muted' : 'text-zl-muted'
-            }`}>
-              Upcoming Bills
-            </h2>
-            <span className={`text-xs font-mono ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-              {formatCurrency(totalUpcoming)} due
-            </span>
-          </div>
-          {upcomingBills.length === 0 ? (
-            <p className={`text-sm py-4 text-center ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-              All bills paid this month
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {upcomingBills.map((bill) => {
-                const dueDate = new Date(now.getFullYear(), now.getMonth(), bill.dueDay)
-                const daysUntil = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24))
-                return (
-                  <div
-                    key={bill.name}
-                    className={`flex items-center justify-between py-2.5 px-3 rounded-xl ${
-                      isDark ? 'bg-white/[0.02] hover:bg-white/[0.04]' : 'bg-black/[0.02] hover:bg-black/[0.04]'
-                    } transition-colors`}
-                  >
-                    <div>
-                      <p className={`text-[13px] ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
-                        {bill.name}
-                      </p>
-                      <p className={`text-xs ${
-                        daysUntil <= 3
-                          ? isDark ? 'text-z-red' : 'text-zl-red'
-                          : isDark ? 'text-z-muted' : 'text-zl-muted'
-                      }`}>
-                        <CalendarClock size={10} className="inline mr-1" />
-                        {daysUntil <= 0 ? 'Due today' : daysUntil === 1 ? 'Due tomorrow' : `Due in ${daysUntil} days`}
-                      </p>
-                    </div>
-                    <span className={`font-mono text-sm font-semibold ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
-                      {formatCurrency(bill.amount)}
-                    </span>
-                  </div>
-                )
-              })}
+      {/* ========== CHARTS — asymmetric grid ========== */}
+      <section className="px-6 md:px-10 lg:px-16 mb-16 space-y-6">
+        <motion.div variants={fadeUp} custom={4} initial="hidden" animate="show">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            {/* Balance trend — takes 3 cols on lg */}
+            <div className="lg:col-span-3 glass rounded-2xl p-6 md:p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className={`text-xs uppercase tracking-[0.2em] font-medium ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
+                  Balance Trend
+                </h2>
+                <span className={`text-xs ${isDark ? 'text-z-muted/60' : 'text-zl-muted/60'}`}>Last 6 months</span>
+              </div>
+              <BalanceChart />
             </div>
-          )}
+            {/* Pie chart — takes 2 cols */}
+            <div className="lg:col-span-2 glass rounded-2xl p-6 md:p-8">
+              <h2 className={`text-xs uppercase tracking-[0.2em] font-medium mb-6 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
+                Where your money goes
+              </h2>
+              <SpendingPieChart />
+            </div>
+          </div>
         </motion.div>
-      </div>
-    </motion.div>
+
+        {/* Heatmap — full width */}
+        <motion.div variants={fadeUp} custom={5} initial="hidden" animate="show" className="glass rounded-2xl p-6 md:p-8">
+          <h2 className={`text-xs uppercase tracking-[0.2em] font-medium mb-6 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
+            Spending Activity
+          </h2>
+          <SpendingHeatmap />
+        </motion.div>
+      </section>
+
+      {/* ========== BUDGET + BILLS — side by side ========== */}
+      <section className="px-6 md:px-10 lg:px-16 mb-16">
+        <motion.div variants={fadeUp} custom={6} initial="hidden" animate="show">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Budget */}
+            <div className="glass rounded-2xl p-6 md:p-8">
+              <h2 className={`text-xs uppercase tracking-[0.2em] font-medium mb-8 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
+                Budget vs. Actual
+              </h2>
+              <div className="space-y-5">
+                {budgetEntries.map(({ category, limit, spent, pct }) => {
+                  const over = pct > 100
+                  const barColor = over
+                    ? isDark ? 'bg-z-red' : 'bg-zl-red'
+                    : pct > 75
+                    ? isDark ? 'bg-z-amber' : 'bg-zl-amber'
+                    : isDark ? 'bg-z-accent' : 'bg-zl-accent'
+                  return (
+                    <div key={category}>
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className={`flex items-center gap-1.5 ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
+                          {category}
+                          {over && <AlertCircle size={12} className={isDark ? 'text-z-red' : 'text-zl-red'} />}
+                        </span>
+                        <span className={`font-mono text-xs ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
+                          {formatCurrency(spent)} / {formatCurrency(limit)}
+                        </span>
+                      </div>
+                      <div className={`h-1 rounded-full overflow-hidden ${isDark ? 'bg-white/[0.04]' : 'bg-black/[0.04]'}`}>
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min(pct, 100)}%` }}
+                          transition={{ duration: 0.8, ease: 'easeOut' }}
+                          className={`h-full rounded-full ${barColor}`}
+                        />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Upcoming Bills */}
+            <div className="glass rounded-2xl p-6 md:p-8">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className={`text-xs uppercase tracking-[0.2em] font-medium ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
+                  Upcoming Bills
+                </h2>
+                <span className={`text-xs font-mono ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
+                  {formatCurrency(totalUpcoming)} due
+                </span>
+              </div>
+              {upcomingBills.length === 0 ? (
+                <p className={`text-sm py-4 text-center ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
+                  All bills paid this month
+                </p>
+              ) : (
+                <div className="space-y-1">
+                  {upcomingBills.map((bill) => {
+                    const dueDate = new Date(now.getFullYear(), now.getMonth(), bill.dueDay)
+                    const daysUntil = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24))
+                    return (
+                      <div
+                        key={bill.name}
+                        className={`flex items-center justify-between py-3 px-4 rounded-xl transition-colors ${
+                          isDark ? 'hover:bg-white/[0.02]' : 'hover:bg-black/[0.02]'
+                        }`}
+                      >
+                        <div>
+                          <p className={`text-sm ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
+                            {bill.name}
+                          </p>
+                          <p className={`text-xs mt-0.5 ${
+                            daysUntil <= 3
+                              ? isDark ? 'text-z-red' : 'text-zl-red'
+                              : isDark ? 'text-z-muted' : 'text-zl-muted'
+                          }`}>
+                            <CalendarClock size={10} className="inline mr-1" />
+                            {daysUntil <= 0 ? 'Due today' : daysUntil === 1 ? 'Due tomorrow' : `Due in ${daysUntil} days`}
+                          </p>
+                        </div>
+                        <span className={`font-mono text-sm font-semibold ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
+                          {formatCurrency(bill.amount)}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ========== QUICK NAV CARDS (like Hark "Our Story"/"Our Solutions") ========== */}
+      <section className="px-6 md:px-10 lg:px-16 mb-16">
+        <motion.div variants={fadeUp} custom={7} initial="hidden" animate="show">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button
+              onClick={() => setActivePage('transactions')}
+              className={`glass card-lift rounded-2xl p-6 flex items-end justify-between text-left group ${
+                isDark ? 'hover:border-z-border-strong' : 'hover:border-zl-border-strong'
+              }`}
+            >
+              <div>
+                <p className={`text-xs uppercase tracking-[0.2em] mb-2 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
+                  Recent Activity
+                </p>
+                <p className={`text-lg font-medium ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
+                  Transactions
+                </p>
+              </div>
+              <ArrowRight size={18} className={`transition-transform group-hover:translate-x-1 ${
+                isDark ? 'text-z-muted' : 'text-zl-muted'
+              }`} />
+            </button>
+            <button
+              onClick={() => setActivePage('insights')}
+              className={`glass card-lift rounded-2xl p-6 flex items-end justify-between text-left group ${
+                isDark ? 'hover:border-z-border-strong' : 'hover:border-zl-border-strong'
+              }`}
+            >
+              <div>
+                <p className={`text-xs uppercase tracking-[0.2em] mb-2 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
+                  Your Patterns
+                </p>
+                <p className={`text-lg font-medium ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
+                  Insights
+                </p>
+              </div>
+              <ArrowRight size={18} className={`transition-transform group-hover:translate-x-1 ${
+                isDark ? 'text-z-muted' : 'text-zl-muted'
+              }`} />
+            </button>
+          </div>
+        </motion.div>
+      </section>
+    </div>
   )
 }
