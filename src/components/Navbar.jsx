@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import logoImg from '../assets/logo.png'
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -37,16 +38,7 @@ export default function Navbar() {
       <header className="fixed top-0 left-0 right-0 z-50 nav-bar">
         <div className="flex items-center justify-between px-6 md:px-10 h-16">
           <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-md flex items-center justify-center font-display font-[700] text-sm ${
-              isDark ? 'bg-z-surface text-z-accent-bright' : 'bg-zl-elevated text-zl-accent-bright'
-            }`}>
-              C
-            </div>
-            <span className={`font-display font-bold text-[15px] tracking-[-0.03em] ${
-              isDark ? 'text-z-text' : 'text-zl-text'
-            }`}>
-              Centra
-            </span>
+            <img src={logoImg} alt="Centra" className={`h-8 w-auto ${isDark ? 'invert-0' : 'invert'}`} />
           </div>
 
           {/* Desktop nav links — centered, hidden on mobile */}
