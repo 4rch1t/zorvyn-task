@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+﻿import { useMemo } from 'react'
 import { useStore } from '../store/useStore'
 import { motion } from 'framer-motion'
 import {
@@ -16,40 +16,30 @@ function formatCurrency(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
 }
 
-function InsightCard({ icon: Icon, label, value, detail, accent, isDark }) {
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] } },
+}
+
+function InsightCard({ icon: Icon, label, value, detail, stripe, isDark }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`p-5 rounded border ${
-        isDark ? 'bg-terminal-card border-terminal-border' : 'bg-light-card border-light-border shadow-sm'
-      }`}
+      variants={fadeUp}
+      className={`glass card-glow accent-stripe ${stripe} rounded-2xl p-5 pl-6`}
     >
       <div className="flex items-start gap-3">
-        <div className={`p-2 rounded ${isDark ? 'bg-terminal-surface' : 'bg-light-bg'}`}>
-          <Icon size={18} className={accent} />
+        <div className={`p-2 rounded-xl ${isDark ? 'bg-white/5' : 'bg-black/5'}`}>
+          <Icon size={16} className={isDark ? 'text-z-muted' : 'text-zl-muted'} />
         </div>
         <div className="flex-1 min-w-0">
-          <p
-            className={`text-xs uppercase tracking-wider mb-1 ${
-              isDark ? 'text-terminal-muted' : 'text-light-muted'
-            }`}
-          >
+          <p className={`text-[11px] uppercase tracking-widest font-medium mb-1 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
             {label}
           </p>
-          <p
-            className={`text-lg font-mono font-bold truncate ${
-              isDark ? 'text-terminal-text' : 'text-light-text'
-            }`}
-          >
+          <p className={`text-lg font-mono font-bold truncate ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
             {value}
           </p>
           {detail && (
-            <p
-              className={`text-xs mt-1 ${
-                isDark ? 'text-terminal-muted' : 'text-light-muted'
-              }`}
-            >
+            <p className={`text-xs mt-1 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
               {detail}
             </p>
           )}
@@ -61,19 +51,19 @@ function InsightCard({ icon: Icon, label, value, detail, accent, isDark }) {
 
 function Recommendation({ text, type, isDark }) {
   const colorMap = {
-    warning: isDark ? 'border-terminal-amber/30 bg-terminal-amber/5' : 'border-light-amber/30 bg-light-amber/5',
-    good: isDark ? 'border-terminal-accent/30 bg-terminal-accent/5' : 'border-light-accent/30 bg-light-accent/5',
-    info: isDark ? 'border-terminal-blue/30 bg-terminal-blue/5' : 'border-light-blue/30 bg-light-blue/5',
+    warning: isDark ? 'border-z-amber/20 bg-z-amber/5' : 'border-zl-amber/20 bg-zl-amber/5',
+    good: isDark ? 'border-z-green/20 bg-z-green/5' : 'border-zl-green/20 bg-zl-green/5',
+    info: isDark ? 'border-z-blue/20 bg-z-blue/5' : 'border-zl-blue/20 bg-zl-blue/5',
   }
   const iconColor = {
-    warning: isDark ? 'text-terminal-amber' : 'text-light-amber',
-    good: isDark ? 'text-terminal-accent' : 'text-light-accent',
-    info: isDark ? 'text-terminal-blue' : 'text-light-blue',
+    warning: isDark ? 'text-z-amber' : 'text-zl-amber',
+    good: isDark ? 'text-z-green' : 'text-zl-green',
+    info: isDark ? 'text-z-blue' : 'text-zl-blue',
   }
   return (
-    <div className={`flex items-start gap-3 p-3 rounded border ${colorMap[type]}`}>
+    <div className={`flex items-start gap-3 p-3 rounded-xl border ${colorMap[type]}`}>
       <Lightbulb size={16} className={`mt-0.5 shrink-0 ${iconColor[type]}`} />
-      <p className={`text-sm ${isDark ? 'text-terminal-text' : 'text-light-text'}`}>{text}</p>
+      <p className={`text-sm ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>{text}</p>
     </div>
   )
 }
@@ -91,7 +81,6 @@ export default function Insights() {
     const thisMonthTxns = transactions.filter((t) => t.date.startsWith(thisMonth))
     const lastMonthTxns = transactions.filter((t) => t.date.startsWith(lastMonth))
 
-    // Highest spending category this month
     const categoryTotals = {}
     thisMonthTxns
       .filter((t) => t.type === 'expense')
@@ -101,7 +90,6 @@ export default function Insights() {
 
     const topCategory = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0]
 
-    // Month-over-month expense comparison
     const thisMonthExpenses = thisMonthTxns
       .filter((t) => t.type === 'expense')
       .reduce((s, t) => s + t.amount, 0)
@@ -114,14 +102,12 @@ export default function Insights() {
         ? ((thisMonthExpenses - lastMonthExpenses) / lastMonthExpenses) * 100
         : 0
 
-    // Biggest single expense
     const expenses = transactions.filter((t) => t.type === 'expense')
     const biggestExpense = expenses.reduce(
       (max, t) => (t.amount > max.amount ? t : max),
       expenses[0] || { amount: 0, description: 'N/A', category: 'N/A' }
     )
 
-    // Savings trend
     const thisMonthIncome = thisMonthTxns
       .filter((t) => t.type === 'income')
       .reduce((s, t) => s + t.amount, 0)
@@ -132,12 +118,10 @@ export default function Insights() {
     const thisMonthSavings = thisMonthIncome - thisMonthExpenses
     const lastMonthSavings = lastMonthIncome - lastMonthExpenses
 
-    // Recurring spend detection — total subscriptions
     const subscriptionTotal = transactions
       .filter((t) => t.category === 'Subscriptions' && t.date.startsWith(thisMonth))
       .reduce((s, t) => s + t.amount, 0)
 
-    // Category breakdown all time
     const allCategoryTotals = {}
     transactions
       .filter((t) => t.type === 'expense')
@@ -148,12 +132,10 @@ export default function Insights() {
     const categoryBreakdown = Object.entries(allCategoryTotals).sort((a, b) => b[1] - a[1])
     const totalExpenseAll = Object.values(allCategoryTotals).reduce((s, v) => s + v, 0)
 
-    // Budget alerts
     const overBudget = Object.entries(budgets)
       .filter(([cat, limit]) => (categoryTotals[cat] || 0) > limit)
       .map(([cat, limit]) => ({ cat, limit, spent: categoryTotals[cat] }))
 
-    // Recommendations
     const recs = []
     if (overBudget.length > 0) {
       const names = overBudget.map((b) => b.cat).join(', ')
@@ -194,7 +176,7 @@ export default function Insights() {
 
   if (transactions.length === 0) {
     return (
-      <div className={`text-center py-20 ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}>
+      <div className={`text-center py-20 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
         <BarChart3 size={48} className="mx-auto mb-4 opacity-30" />
         <p className="text-lg">No data to analyze</p>
         <p className="text-sm mt-1 opacity-60">Add some transactions first</p>
@@ -203,74 +185,51 @@ export default function Insights() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1
-          className={`text-2xl font-bold ${
-            isDark ? 'text-terminal-text' : 'text-light-text'
-          }`}
-        >
+    <motion.div className="space-y-6" initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.05 } } }}>
+      <motion.div variants={fadeUp}>
+        <h1 className={`text-3xl font-bold tracking-tight ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
           Insights
         </h1>
-        <p className={`text-sm mt-1 ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}>
+        <p className={`text-sm mt-1 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
           Patterns, alerts, and recommendations from your transaction history.
         </p>
-      </div>
+      </motion.div>
 
       {/* Recommendations */}
-      <div
-        className={`p-4 rounded border space-y-2 ${
-          isDark ? 'bg-terminal-card border-terminal-border' : 'bg-light-card border-light-border shadow-sm'
-        }`}
-      >
-        <h2
-          className={`text-sm font-mono uppercase tracking-wider mb-3 flex items-center gap-2 ${
-            isDark ? 'text-terminal-muted' : 'text-light-muted'
-          }`}
-        >
+      <motion.div variants={fadeUp} className="glass rounded-2xl p-5 space-y-2">
+        <h2 className={`text-[11px] uppercase tracking-widest font-medium mb-3 flex items-center gap-2 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
           <Lightbulb size={14} /> Recommendations
         </h2>
         {insights.recs.map((r, i) => (
           <Recommendation key={i} text={r.text} type={r.type} isDark={isDark} />
         ))}
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <motion.div className="grid grid-cols-1 sm:grid-cols-2 gap-4" variants={{ show: { transition: { staggerChildren: 0.05 } } }}>
         <InsightCard
           icon={BarChart3}
           label="Top Spending Category"
           value={insights.topCategory ? insights.topCategory[0] : 'No expenses yet'}
-          detail={
-            insights.topCategory
-              ? `${formatCurrency(insights.topCategory[1])} this month`
-              : undefined
-          }
-          accent={isDark ? 'text-terminal-amber' : 'text-light-amber'}
+          detail={insights.topCategory ? `${formatCurrency(insights.topCategory[1])} this month` : undefined}
+          stripe="stripe-amber"
           isDark={isDark}
         />
-
         <InsightCard
           icon={insights.expenseChange > 0 ? TrendingUp : TrendingDown}
           label="Expense Trend (MoM)"
           value={`${insights.expenseChange >= 0 ? '+' : ''}${insights.expenseChange.toFixed(1)}%`}
           detail={`${formatCurrency(insights.lastMonthExpenses)} → ${formatCurrency(insights.thisMonthExpenses)}`}
-          accent={
-            insights.expenseChange > 0
-              ? isDark ? 'text-terminal-red' : 'text-light-red'
-              : isDark ? 'text-terminal-accent' : 'text-light-accent'
-          }
+          stripe={insights.expenseChange > 0 ? 'stripe-red' : 'stripe-green'}
           isDark={isDark}
         />
-
         <InsightCard
           icon={AlertTriangle}
           label="Largest Single Expense"
           value={formatCurrency(insights.biggestExpense.amount)}
-          detail={`${insights.biggestExpense.description}`}
-          accent={isDark ? 'text-terminal-purple' : 'text-light-purple'}
+          detail={insights.biggestExpense.description}
+          stripe="stripe-violet"
           isDark={isDark}
         />
-
         <InsightCard
           icon={PiggyBank}
           label="Savings This Month"
@@ -280,88 +239,58 @@ export default function Insights() {
               ? `+${formatCurrency(insights.thisMonthSavings - insights.lastMonthSavings)} vs last month`
               : `${formatCurrency(insights.thisMonthSavings - insights.lastMonthSavings)} vs last month`
           }
-          accent={
-            insights.thisMonthSavings >= insights.lastMonthSavings
-              ? isDark ? 'text-terminal-accent' : 'text-light-accent'
-              : isDark ? 'text-terminal-red' : 'text-light-red'
-          }
+          stripe={insights.thisMonthSavings >= insights.lastMonthSavings ? 'stripe-green' : 'stripe-red'}
           isDark={isDark}
         />
-
         <InsightCard
           icon={Repeat}
           label="Monthly Subscriptions"
           value={formatCurrency(insights.subscriptionTotal)}
-          detail={`${insights.subscriptionTotal > 70 ? 'Consider auditing unused services' : 'Within reasonable range'}`}
-          accent={isDark ? 'text-terminal-cyan' : 'text-light-cyan'}
+          detail={insights.subscriptionTotal > 70 ? 'Consider auditing unused services' : 'Within reasonable range'}
+          stripe="stripe-cyan"
           isDark={isDark}
         />
-
         <InsightCard
           icon={Target}
           label="Budget Alerts"
           value={insights.overBudget.length === 0 ? 'All on track' : `${insights.overBudget.length} over budget`}
-          detail={
-            insights.overBudget.length > 0
-              ? insights.overBudget.map((b) => b.cat).join(', ')
-              : 'Every category within limits'
-          }
-          accent={
-            insights.overBudget.length > 0
-              ? isDark ? 'text-terminal-red' : 'text-light-red'
-              : isDark ? 'text-terminal-accent' : 'text-light-accent'
-          }
+          detail={insights.overBudget.length > 0 ? insights.overBudget.map((b) => b.cat).join(', ') : 'Every category within limits'}
+          stripe={insights.overBudget.length > 0 ? 'stripe-red' : 'stripe-green'}
           isDark={isDark}
         />
-      </div>
+      </motion.div>
 
-      {/* Category Breakdown Table */}
-      <div
-        className={`rounded border overflow-hidden ${
-          isDark ? 'bg-terminal-card border-terminal-border' : 'bg-light-card border-light-border shadow-sm'
-        }`}
-      >
-        <div className="p-4 pb-2">
-          <h2
-            className={`text-sm font-mono uppercase tracking-wider ${
-              isDark ? 'text-terminal-muted' : 'text-light-muted'
-            }`}
-          >
+      {/* Category Breakdown */}
+      <motion.div variants={fadeUp} className="glass rounded-2xl overflow-hidden">
+        <div className="p-5 pb-2">
+          <h2 className={`text-[11px] uppercase tracking-widest font-medium ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
             All-time Spending Breakdown
           </h2>
         </div>
-        <div className="px-4 pb-4 space-y-3">
+        <div className="px-5 pb-5 space-y-4">
           {insights.categoryBreakdown.map(([cat, total]) => {
             const pct = insights.totalExpenseAll > 0 ? (total / insights.totalExpenseAll) * 100 : 0
             return (
               <div key={cat}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className={isDark ? 'text-terminal-text' : 'text-light-text'}>
-                    {cat}
-                  </span>
-                  <span className={`font-mono ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}>
+                <div className="flex justify-between text-sm mb-1.5">
+                  <span className={isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}>{cat}</span>
+                  <span className={`font-mono text-xs ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
                     {formatCurrency(total)} ({pct.toFixed(1)}%)
                   </span>
                 </div>
-                <div
-                  className={`h-1.5 rounded-full overflow-hidden ${
-                    isDark ? 'bg-terminal-surface' : 'bg-light-bg'
-                  }`}
-                >
+                <div className={`h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-white/5' : 'bg-black/5'}`}>
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${pct}%` }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
-                    className={`h-full rounded-full ${
-                      isDark ? 'bg-terminal-accent' : 'bg-light-accent'
-                    }`}
+                    className={`h-full rounded-full ${isDark ? 'bg-z-accent' : 'bg-zl-accent'}`}
                   />
                 </div>
               </div>
             )
           })}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

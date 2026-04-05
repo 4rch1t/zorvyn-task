@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+﻿import { useState, useEffect, useRef, useMemo } from 'react'
 import { useStore } from '../store/useStore'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -12,7 +12,6 @@ import {
   Plus,
   RotateCcw,
   Keyboard,
-  Download,
 } from 'lucide-react'
 
 export default function CommandPalette() {
@@ -32,7 +31,6 @@ export default function CommandPalette() {
 
   const isDark = theme === 'dark'
 
-  // Ctrl+K / Cmd+K to open
   useEffect(() => {
     const handler = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -45,7 +43,6 @@ export default function CommandPalette() {
     return () => window.removeEventListener('keydown', handler)
   }, [])
 
-  // Focus input on open
   useEffect(() => {
     if (open) {
       setQuery('')
@@ -80,7 +77,6 @@ export default function CommandPalette() {
     )
   }, [query, commands])
 
-  // Keep selection in bounds
   useEffect(() => {
     if (selected >= filtered.length) setSelected(Math.max(0, filtered.length - 1))
   }, [filtered.length, selected])
@@ -102,7 +98,6 @@ export default function CommandPalette() {
     }
   }
 
-  // Group filtered items
   const grouped = useMemo(() => {
     const groups = {}
     filtered.forEach((c) => {
@@ -118,7 +113,6 @@ export default function CommandPalette() {
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -127,60 +121,47 @@ export default function CommandPalette() {
             onClick={() => setOpen(false)}
           />
 
-          {/* Palette */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
             transition={{ duration: 0.15 }}
-            className={`fixed top-[20%] left-1/2 -translate-x-1/2 z-[101] w-full max-w-lg rounded-lg border overflow-hidden shadow-2xl ${
-              isDark
-                ? 'bg-terminal-surface border-terminal-border'
-                : 'bg-light-surface border-light-border'
-            }`}
+            className="fixed top-[20%] left-1/2 -translate-x-1/2 z-[101] w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl glass glass-strong"
           >
-            {/* Search input */}
-            <div
-              className={`flex items-center gap-3 px-4 py-3 border-b ${
-                isDark ? 'border-terminal-border' : 'border-light-border'
-              }`}
-            >
-              <Search size={16} className={isDark ? 'text-terminal-muted' : 'text-light-muted'} />
+            <div className={`flex items-center gap-3 px-4 py-3 border-b ${
+              isDark ? 'border-white/[0.06]' : 'border-black/[0.06]'
+            }`}>
+              <Search size={16} className={isDark ? 'text-z-muted' : 'text-zl-muted'} />
               <input
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Type a command…"
+                placeholder="Type a command\u2026"
                 className={`flex-1 bg-transparent outline-none text-sm ${
-                  isDark ? 'text-terminal-text placeholder:text-terminal-muted' : 'text-light-text placeholder:text-light-muted'
+                  isDark ? 'text-z-text placeholder:text-z-muted' : 'text-zl-text placeholder:text-zl-muted'
                 }`}
               />
-              <kbd
-                className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
-                  isDark
-                    ? 'bg-terminal-card border-terminal-border text-terminal-muted'
-                    : 'bg-light-bg border-light-border text-light-muted'
-                }`}
-              >
+              <kbd className={`text-[10px] font-mono px-1.5 py-0.5 rounded-lg border ${
+                isDark
+                  ? 'bg-white/[0.04] border-white/[0.07] text-z-muted'
+                  : 'bg-black/[0.03] border-black/[0.07] text-zl-muted'
+              }`}>
                 ESC
               </kbd>
             </div>
 
-            {/* Results */}
             <div className="max-h-72 overflow-y-auto py-2">
               {filtered.length === 0 && (
-                <p className={`text-sm text-center py-6 ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}>
+                <p className={`text-sm text-center py-6 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
                   No results found.
                 </p>
               )}
               {Object.entries(grouped).map(([group, items]) => (
                 <div key={group}>
-                  <p
-                    className={`px-4 py-1 text-[10px] uppercase tracking-wider font-mono ${
-                      isDark ? 'text-terminal-muted' : 'text-light-muted'
-                    }`}
-                  >
+                  <p className={`px-4 py-1 text-[10px] uppercase tracking-widest font-medium ${
+                    isDark ? 'text-z-muted' : 'text-zl-muted'
+                  }`}>
                     {group}
                   </p>
                   {items.map((cmd) => {
@@ -196,14 +177,14 @@ export default function CommandPalette() {
                         className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
                           isSelected
                             ? isDark
-                              ? 'bg-terminal-accent/10 text-terminal-accent'
-                              : 'bg-light-accent/10 text-light-accent'
+                              ? 'bg-z-accent/10 text-z-accent'
+                              : 'bg-zl-accent/10 text-zl-accent'
                             : isDark
-                            ? 'text-terminal-text hover:bg-terminal-card'
-                            : 'text-light-text hover:bg-light-bg'
+                            ? 'text-z-text hover:bg-white/[0.03]'
+                            : 'text-zl-text hover:bg-black/[0.03]'
                         }`}
                       >
-                        <Icon size={15} className={isSelected ? '' : isDark ? 'text-terminal-muted' : 'text-light-muted'} />
+                        <Icon size={15} className={isSelected ? '' : isDark ? 'text-z-muted' : 'text-zl-muted'} />
                         {cmd.label}
                       </button>
                     )
@@ -212,16 +193,11 @@ export default function CommandPalette() {
               ))}
             </div>
 
-            {/* Footer hint */}
-            <div
-              className={`flex items-center gap-4 px-4 py-2 text-[10px] font-mono border-t ${
-                isDark
-                  ? 'border-terminal-border text-terminal-muted'
-                  : 'border-light-border text-light-muted'
-              }`}
-            >
-              <span>↑↓ navigate</span>
-              <span>↵ select</span>
+            <div className={`flex items-center gap-4 px-4 py-2 text-[10px] font-mono border-t ${
+              isDark ? 'border-white/[0.06] text-z-muted' : 'border-black/[0.06] text-zl-muted'
+            }`}>
+              <span>\u2191\u2193 navigate</span>
+              <span>\u21B5 select</span>
               <span>esc close</span>
             </div>
           </motion.div>

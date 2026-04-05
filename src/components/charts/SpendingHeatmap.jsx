@@ -15,19 +15,19 @@ function getIntensity(amount, max) {
 }
 
 const darkColors = [
-  'bg-terminal-surface',    // 0 — no spending
-  'bg-terminal-accent/20',  // 1
-  'bg-terminal-accent/40',  // 2
-  'bg-terminal-accent/70',  // 3
-  'bg-terminal-accent',     // 4
+  'bg-white/[0.03]',      // 0 — no spending
+  'bg-z-accent/20',       // 1
+  'bg-z-accent/40',       // 2
+  'bg-z-accent/70',       // 3
+  'bg-z-accent',          // 4
 ]
 
 const lightColors = [
-  'bg-light-bg',            // 0
-  'bg-light-accent/20',     // 1
-  'bg-light-accent/40',     // 2
-  'bg-light-accent/70',     // 3
-  'bg-light-accent',        // 4
+  'bg-black/[0.03]',      // 0
+  'bg-zl-accent/20',      // 1
+  'bg-zl-accent/40',      // 2
+  'bg-zl-accent/70',      // 3
+  'bg-zl-accent',         // 4
 ]
 
 export default function SpendingHeatmap() {
@@ -104,7 +104,7 @@ export default function SpendingHeatmap() {
         {monthLabels.map((m, i) => (
           <span
             key={i}
-            className={`text-[10px] font-mono ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}
+            className={`text-[10px] font-mono ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}
             style={{ position: 'relative', left: `${m.col * 16}px`, marginRight: i < monthLabels.length - 1 ? 0 : 0 }}
           >
             {m.label}
@@ -119,7 +119,7 @@ export default function SpendingHeatmap() {
             <span
               key={i}
               className={`text-[9px] font-mono w-4 h-3 flex items-center justify-center ${
-                isDark ? 'text-terminal-muted' : 'text-light-muted'
+                isDark ? 'text-z-muted' : 'text-zl-muted'
               }`}
             >
               {i % 2 === 1 ? d : ''}
@@ -153,11 +153,11 @@ export default function SpendingHeatmap() {
 
       {/* Legend */}
       <div className="flex items-center gap-2 mt-2 ml-6">
-        <span className={`text-[10px] font-mono ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}>Less</span>
+        <span className={`text-[10px] font-mono ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>Less</span>
         {colors.map((c, i) => (
           <div key={i} className={`w-3 h-3 rounded-sm ${c}`} />
         ))}
-        <span className={`text-[10px] font-mono ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}>More</span>
+        <span className={`text-[10px] font-mono ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>More</span>
       </div>
     </div>
   )

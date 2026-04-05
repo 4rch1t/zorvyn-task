@@ -23,20 +23,20 @@ export default function App() {
   const PageComponent = pages[activePage] || Dashboard
 
   return (
-    <div
-      className={`min-h-screen ${
-        isDark ? 'dark bg-terminal-bg' : 'light bg-light-bg'
-      }`}
-    >
+    <div className={`min-h-screen ${isDark ? 'dark bg-z-bg' : 'light bg-zl-bg'}`}>
+      {/* Animated mesh gradient background */}
+      <div className="mesh-bg" />
+      <div className="dot-grid" />
+
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 pt-20 pb-10">
+      <main className="relative z-10 md:ml-[76px] px-4 md:px-8 pt-6 pb-24 md:pb-10 max-w-[1400px]">
         <AnimatePresence mode="wait">
           <motion.div
             key={activePage}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -12, filter: 'blur(4px)' }}
+            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
             <PageComponent />
           </motion.div>

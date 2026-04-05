@@ -25,45 +25,39 @@ function getGreeting() {
   return 'Good evening'
 }
 
-function SummaryCard({ icon: Icon, label, value, subtext, accent, isDark }) {
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06 } },
+}
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] } },
+}
+
+function SummaryCard({ icon: Icon, label, value, subtext, stripe, isDark }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`p-4 rounded border ${
-        isDark ? 'bg-terminal-card border-terminal-border' : 'bg-light-card border-light-border shadow-sm'
-      }`}
+      variants={fadeUp}
+      className={`glass card-glow accent-stripe ${stripe} rounded-2xl p-5 pl-6`}
     >
-      <div className="flex items-center gap-3">
-        <div
-          className={`p-2 rounded ${
-            isDark ? 'bg-terminal-surface' : 'bg-light-bg'
-          }`}
-        >
-          <Icon size={18} className={accent} />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p
-            className={`text-xs uppercase tracking-wider ${
-              isDark ? 'text-terminal-muted' : 'text-light-muted'
-            }`}
-          >
-            {label}
-          </p>
-          <p
-            className={`text-xl font-mono font-bold ${
-              isDark ? 'text-terminal-text' : 'text-light-text'
-            }`}
-          >
-            {value}
-          </p>
-          {subtext && (
-            <p className={`text-xs mt-0.5 ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}>
-              {subtext}
-            </p>
-          )}
+      <div className="flex items-start justify-between mb-3">
+        <div className={`p-2 rounded-xl ${isDark ? 'bg-white/5' : 'bg-black/5'}`}>
+          <Icon size={16} className={isDark ? 'text-z-muted' : 'text-zl-muted'} />
         </div>
       </div>
+      <p className={`text-[11px] uppercase tracking-widest font-medium mb-1 ${
+        isDark ? 'text-z-muted' : 'text-zl-muted'
+      }`}>
+        {label}
+      </p>
+      <p className={`text-2xl font-mono font-bold tracking-tight ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
+        {value}
+      </p>
+      {subtext && (
+        <p className={`text-xs mt-1 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
+          {subtext}
+        </p>
+      )}
     </motion.div>
   )
 }
@@ -91,7 +85,6 @@ export default function Dashboard() {
       ? ((thisMonthExpenses - lastMonthExpenses) / lastMonthExpenses) * 100
       : 0
 
-    // Budget usage this month
     const categorySpending = {}
     thisMonth.filter((t) => t.type === 'expense').forEach((t) => {
       categorySpending[t.category] = (categorySpending[t.category] || 0) + t.amount
@@ -107,7 +100,6 @@ export default function Dashboard() {
     }
   }, [transactions, thisMonthKey, lastMonthKey])
 
-  // Upcoming bills — bills due after today this month
   const upcomingBills = useMemo(() => {
     const today = now.getDate()
     return recurringBills
@@ -124,32 +116,31 @@ export default function Dashboard() {
       label: 'Net Balance',
       value: formatCurrency(stats.totalBalance),
       subtext: 'All time',
-      accent: isDark ? 'text-terminal-accent' : 'text-light-accent',
+      stripe: 'stripe-orange',
     },
     {
       icon: TrendingUp,
       label: 'Income This Month',
       value: formatCurrency(stats.thisMonthIncome),
       subtext: now.toLocaleDateString('en-US', { month: 'long' }),
-      accent: isDark ? 'text-terminal-accent' : 'text-light-accent',
+      stripe: 'stripe-green',
     },
     {
       icon: TrendingDown,
       label: 'Spent This Month',
       value: formatCurrency(stats.thisMonthExpenses),
       subtext: `${stats.expenseChange >= 0 ? '+' : ''}${stats.expenseChange.toFixed(1)}% vs last month`,
-      accent: isDark ? 'text-terminal-red' : 'text-light-red',
+      stripe: 'stripe-red',
     },
     {
       icon: PiggyBank,
       label: 'Savings Rate',
       value: `${stats.savingsRate.toFixed(1)}%`,
       subtext: stats.savingsRate >= 20 ? 'On track' : 'Below 20% target',
-      accent: isDark ? 'text-terminal-amber' : 'text-light-amber',
+      stripe: 'stripe-amber',
     },
   ]
 
-  // Budget bars — only categories where there's a budget
   const budgetEntries = Object.entries(budgets)
     .map(([cat, limit]) => ({
       category: cat,
@@ -160,144 +151,115 @@ export default function Dashboard() {
     .sort((a, b) => b.pct - a.pct)
 
   return (
-    <div className="space-y-6">
+    <motion.div className="space-y-6" variants={stagger} initial="hidden" animate="show">
       {/* Greeting */}
-      <div>
-        <h1
-          className={`text-2xl font-bold ${
-            isDark ? 'text-terminal-text' : 'text-light-text'
-          }`}
-        >
+      <motion.div variants={fadeUp}>
+        <h1 className={`text-3xl font-bold tracking-tight ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
           {getGreeting()}
         </h1>
-        <p className={`text-sm mt-1 ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}>
+        <p className={`text-sm mt-1 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
           Here's your financial snapshot for {now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}.
         </p>
-      </div>
+      </motion.div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Summary Cards – bento grid */}
+      <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" variants={stagger}>
         {cards.map((card) => (
           <SummaryCard key={card.label} {...card} isDark={isDark} />
         ))}
-      </div>
+      </motion.div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div
-          className={`lg:col-span-2 p-4 rounded border ${
-            isDark ? 'bg-terminal-card border-terminal-border' : 'bg-light-card border-light-border shadow-sm'
-          }`}
-        >
-          <h2
-            className={`text-sm font-mono uppercase tracking-wider mb-4 ${
-              isDark ? 'text-terminal-muted' : 'text-light-muted'
-            }`}
-          >
-            Balance Trend (6 months)
+        <motion.div variants={fadeUp} className="lg:col-span-2 glass rounded-2xl p-5">
+          <h2 className={`text-[11px] uppercase tracking-widest font-medium mb-4 ${
+            isDark ? 'text-z-muted' : 'text-zl-muted'
+          }`}>
+            Balance Trend
           </h2>
           <BalanceChart />
-        </div>
-        <div
-          className={`p-4 rounded border ${
-            isDark ? 'bg-terminal-card border-terminal-border' : 'bg-light-card border-light-border shadow-sm'
-          }`}
-        >
-          <h2
-            className={`text-sm font-mono uppercase tracking-wider mb-4 ${
-              isDark ? 'text-terminal-muted' : 'text-light-muted'
-            }`}
-          >
+        </motion.div>
+        <motion.div variants={fadeUp} className="glass rounded-2xl p-5">
+          <h2 className={`text-[11px] uppercase tracking-widest font-medium mb-4 ${
+            isDark ? 'text-z-muted' : 'text-zl-muted'
+          }`}>
             Where your money goes
           </h2>
           <SpendingPieChart />
-        </div>
+        </motion.div>
       </div>
 
       {/* Spending Heatmap */}
-      <div
-        className={`p-4 rounded border ${
-          isDark ? 'bg-terminal-card border-terminal-border' : 'bg-light-card border-light-border shadow-sm'
-        }`}
-      >
-        <h2
-          className={`text-sm font-mono uppercase tracking-wider mb-4 ${
-            isDark ? 'text-terminal-muted' : 'text-light-muted'
-          }`}
-        >
-          Spending Activity (last 12 weeks)
+      <motion.div variants={fadeUp} className="glass rounded-2xl p-5">
+        <h2 className={`text-[11px] uppercase tracking-widest font-medium mb-4 ${
+          isDark ? 'text-z-muted' : 'text-zl-muted'
+        }`}>
+          Spending Activity
         </h2>
         <SpendingHeatmap />
-      </div>
+      </motion.div>
 
-      {/* Budget + Upcoming Bills Row */}
+      {/* Budget + Upcoming Bills */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Monthly Budget Tracker */}
-        <div
-          className={`p-4 rounded border ${
-            isDark ? 'bg-terminal-card border-terminal-border' : 'bg-light-card border-light-border shadow-sm'
-          }`}
-        >
-          <h2
-            className={`text-sm font-mono uppercase tracking-wider mb-4 ${
-              isDark ? 'text-terminal-muted' : 'text-light-muted'
-            }`}
-          >
+        {/* Budget Tracker */}
+        <motion.div variants={fadeUp} className="glass rounded-2xl p-5">
+          <h2 className={`text-[11px] uppercase tracking-widest font-medium mb-5 ${
+            isDark ? 'text-z-muted' : 'text-zl-muted'
+          }`}>
             Budget vs. Actual — {now.toLocaleDateString('en-US', { month: 'short' })}
           </h2>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {budgetEntries.map(({ category, limit, spent, pct }) => {
               const over = pct > 100
               const barColor = over
-                ? isDark ? 'bg-terminal-red' : 'bg-light-red'
+                ? 'bg-z-red'
                 : pct > 75
-                ? isDark ? 'bg-terminal-amber' : 'bg-light-amber'
-                : isDark ? 'bg-terminal-accent' : 'bg-light-accent'
+                ? 'bg-z-amber'
+                : 'bg-z-accent'
+              const barColorLight = over
+                ? 'bg-zl-red'
+                : pct > 75
+                ? 'bg-zl-amber'
+                : 'bg-zl-accent'
               return (
                 <div key={category}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className={`flex items-center gap-1.5 ${isDark ? 'text-terminal-text' : 'text-light-text'}`}>
+                  <div className="flex justify-between text-sm mb-1.5">
+                    <span className={`flex items-center gap-1.5 text-[13px] ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
                       {category}
-                      {over && <AlertCircle size={12} className={isDark ? 'text-terminal-red' : 'text-light-red'} />}
+                      {over && <AlertCircle size={12} className={isDark ? 'text-z-red' : 'text-zl-red'} />}
                     </span>
-                    <span className={`font-mono text-xs ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}>
+                    <span className={`font-mono text-xs ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
                       {formatCurrency(spent)} / {formatCurrency(limit)}
                     </span>
                   </div>
-                  <div className={`h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-terminal-surface' : 'bg-light-bg'}`}>
+                  <div className={`h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-white/5' : 'bg-black/5'}`}>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min(pct, 100)}%` }}
                       transition={{ duration: 0.8, ease: 'easeOut' }}
-                      className={`h-full rounded-full ${barColor}`}
+                      className={`h-full rounded-full ${isDark ? barColor : barColorLight}`}
                     />
                   </div>
                 </div>
               )
             })}
           </div>
-        </div>
+        </motion.div>
 
         {/* Upcoming Bills */}
-        <div
-          className={`p-4 rounded border ${
-            isDark ? 'bg-terminal-card border-terminal-border' : 'bg-light-card border-light-border shadow-sm'
-          }`}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h2
-              className={`text-sm font-mono uppercase tracking-wider ${
-                isDark ? 'text-terminal-muted' : 'text-light-muted'
-              }`}
-            >
+        <motion.div variants={fadeUp} className="glass rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className={`text-[11px] uppercase tracking-widest font-medium ${
+              isDark ? 'text-z-muted' : 'text-zl-muted'
+            }`}>
               Upcoming Bills
             </h2>
-            <span className={`text-xs font-mono ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}>
+            <span className={`text-xs font-mono ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
               {formatCurrency(totalUpcoming)} due
             </span>
           </div>
           {upcomingBills.length === 0 ? (
-            <p className={`text-sm py-4 text-center ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}>
+            <p className={`text-sm py-4 text-center ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
               All bills paid this month
             </p>
           ) : (
@@ -308,24 +270,24 @@ export default function Dashboard() {
                 return (
                   <div
                     key={bill.name}
-                    className={`flex items-center justify-between py-2 px-3 rounded ${
-                      isDark ? 'bg-terminal-surface' : 'bg-light-bg'
-                    }`}
+                    className={`flex items-center justify-between py-2.5 px-3 rounded-xl ${
+                      isDark ? 'bg-white/[0.02] hover:bg-white/[0.04]' : 'bg-black/[0.02] hover:bg-black/[0.04]'
+                    } transition-colors`}
                   >
                     <div>
-                      <p className={`text-sm ${isDark ? 'text-terminal-text' : 'text-light-text'}`}>
+                      <p className={`text-[13px] ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
                         {bill.name}
                       </p>
                       <p className={`text-xs ${
                         daysUntil <= 3
-                          ? isDark ? 'text-terminal-red' : 'text-light-red'
-                          : isDark ? 'text-terminal-muted' : 'text-light-muted'
+                          ? isDark ? 'text-z-red' : 'text-zl-red'
+                          : isDark ? 'text-z-muted' : 'text-zl-muted'
                       }`}>
                         <CalendarClock size={10} className="inline mr-1" />
                         {daysUntil <= 0 ? 'Due today' : daysUntil === 1 ? 'Due tomorrow' : `Due in ${daysUntil} days`}
                       </p>
                     </div>
-                    <span className={`font-mono text-sm font-semibold ${isDark ? 'text-terminal-text' : 'text-light-text'}`}>
+                    <span className={`font-mono text-sm font-semibold ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
                       {formatCurrency(bill.amount)}
                     </span>
                   </div>
@@ -333,8 +295,8 @@ export default function Dashboard() {
               })}
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }

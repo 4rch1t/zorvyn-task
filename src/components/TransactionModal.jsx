@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useStore } from '../store/useStore'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
@@ -79,14 +79,14 @@ export default function TransactionModal() {
     closeModal()
   }
 
-  const inputClass = `w-full text-sm px-3 py-2 rounded border outline-none transition-colors ${
+  const inputClass = `w-full text-sm px-3 py-2 rounded-xl outline-none transition-colors ${
     isDark
-      ? 'bg-terminal-surface border-terminal-border text-terminal-text focus:border-terminal-accent'
-      : 'bg-light-bg border-light-border text-light-text focus:border-light-accent'
+      ? 'bg-white/[0.04] border border-white/[0.07] text-z-text placeholder:text-z-muted focus:border-z-accent/50'
+      : 'bg-black/[0.03] border border-black/[0.07] text-zl-text placeholder:text-zl-muted focus:border-zl-accent/50'
   }`
 
-  const labelClass = `block text-xs font-mono uppercase tracking-wider mb-1 ${
-    isDark ? 'text-terminal-muted' : 'text-light-muted'
+  const labelClass = `block text-[11px] uppercase tracking-widest font-medium mb-1 ${
+    isDark ? 'text-z-muted' : 'text-zl-muted'
   }`
 
   return (
@@ -107,27 +107,19 @@ export default function TransactionModal() {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className={`relative w-full max-w-md rounded-lg border p-6 ${
-              isDark
-                ? 'bg-terminal-card border-terminal-border'
-                : 'bg-light-card border-light-border shadow-lg'
-            }`}
+            className="relative w-full max-w-md rounded-2xl p-6 glass glass-strong shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
-              <h2
-                className={`text-lg font-mono font-bold ${
-                  isDark ? 'text-terminal-text' : 'text-light-text'
-                }`}
-              >
+              <h2 className={`text-lg font-bold ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
                 {editingTransaction ? 'Edit Transaction' : 'New Transaction'}
               </h2>
               <button
                 onClick={closeModal}
-                className={`p-1 rounded transition-colors ${
+                className={`p-1.5 rounded-lg transition-colors ${
                   isDark
-                    ? 'text-terminal-muted hover:text-terminal-text hover:bg-terminal-surface'
-                    : 'text-light-muted hover:text-light-text hover:bg-light-bg'
+                    ? 'text-z-muted hover:text-z-text hover:bg-white/5'
+                    : 'text-zl-muted hover:text-zl-text hover:bg-black/5'
                 }`}
               >
                 <X size={18} />
@@ -144,18 +136,18 @@ export default function TransactionModal() {
                       key={t}
                       type="button"
                       onClick={() => setForm({ ...form, type: t })}
-                      className={`flex-1 py-1.5 text-sm rounded border font-medium transition-all ${
+                      className={`flex-1 py-2 text-sm rounded-xl border font-medium transition-all ${
                         form.type === t
                           ? t === 'expense'
                             ? isDark
-                              ? 'bg-terminal-red/15 border-terminal-red/40 text-terminal-red'
-                              : 'bg-light-red/10 border-light-red/40 text-light-red'
+                              ? 'bg-z-red/15 border-z-red/40 text-z-red'
+                              : 'bg-zl-red/10 border-zl-red/40 text-zl-red'
                             : isDark
-                            ? 'bg-terminal-accent/15 border-terminal-accent/40 text-terminal-accent'
-                            : 'bg-light-accent/10 border-light-accent/40 text-light-accent'
+                            ? 'bg-z-green/15 border-z-green/40 text-z-green'
+                            : 'bg-zl-green/10 border-zl-green/40 text-zl-green'
                           : isDark
-                          ? 'border-terminal-border text-terminal-muted hover:border-terminal-muted'
-                          : 'border-light-border text-light-muted hover:border-light-muted'
+                          ? 'border-white/[0.07] text-z-muted hover:border-white/[0.15]'
+                          : 'border-black/[0.07] text-zl-muted hover:border-black/[0.15]'
                       }`}
                     >
                       {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -174,9 +166,7 @@ export default function TransactionModal() {
                     className={inputClass}
                   />
                   {errors.date && (
-                    <p className={`text-xs mt-1 ${isDark ? 'text-terminal-red' : 'text-light-red'}`}>
-                      {errors.date}
-                    </p>
+                    <p className={`text-xs mt-1 ${isDark ? 'text-z-red' : 'text-zl-red'}`}>{errors.date}</p>
                   )}
                 </div>
                 <div>
@@ -191,9 +181,7 @@ export default function TransactionModal() {
                     className={`${inputClass} font-mono`}
                   />
                   {errors.amount && (
-                    <p className={`text-xs mt-1 ${isDark ? 'text-terminal-red' : 'text-light-red'}`}>
-                      {errors.amount}
-                    </p>
+                    <p className={`text-xs mt-1 ${isDark ? 'text-z-red' : 'text-zl-red'}`}>{errors.amount}</p>
                   )}
                 </div>
               </div>
@@ -208,9 +196,7 @@ export default function TransactionModal() {
                   className={inputClass}
                 />
                 {errors.description && (
-                  <p className={`text-xs mt-1 ${isDark ? 'text-terminal-red' : 'text-light-red'}`}>
-                    {errors.description}
-                  </p>
+                  <p className={`text-xs mt-1 ${isDark ? 'text-z-red' : 'text-zl-red'}`}>{errors.description}</p>
                 )}
               </div>
 
@@ -222,19 +208,17 @@ export default function TransactionModal() {
                   className={inputClass}
                 >
                   {allCategories.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
+                    <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
               </div>
 
               <button
                 type="submit"
-                className={`w-full py-2 rounded text-sm font-semibold transition-colors ${
+                className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-colors ${
                   isDark
-                    ? 'bg-terminal-accent text-terminal-bg hover:bg-terminal-accent-dim'
-                    : 'bg-light-accent text-white hover:bg-light-accent-dim'
+                    ? 'bg-z-accent text-z-bg hover:bg-z-accent/80'
+                    : 'bg-zl-accent text-white hover:bg-zl-accent/80'
                 }`}
               >
                 {editingTransaction ? 'Update Transaction' : 'Add Transaction'}

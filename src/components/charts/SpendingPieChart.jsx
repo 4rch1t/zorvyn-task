@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { useStore } from '../../store/useStore'
 
-const COLORS_DARK = ['#00ff88', '#ffaa00', '#4488ff', '#aa66ff', '#00ccdd', '#ff4466']
-const COLORS_LIGHT = ['#059669', '#d97706', '#2563eb', '#7c3aed', '#0891b2', '#dc2626']
+const COLORS_DARK = ['#f97316', '#fbbf24', '#60a5fa', '#a78bfa', '#34d399', '#f87171']
+const COLORS_LIGHT = ['#ea580c', '#d97706', '#2563eb', '#7c3aed', '#059669', '#dc2626']
 
 export default function SpendingPieChart() {
   const { transactions, theme } = useStore()
@@ -25,7 +25,7 @@ export default function SpendingPieChart() {
 
   if (data.length === 0) {
     return (
-      <div className={`flex items-center justify-center h-[260px] text-sm ${isDark ? 'text-terminal-muted' : 'text-light-muted'}`}>
+      <div className={`flex items-center justify-center h-[260px] text-sm ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
         No expense data
       </div>
     )
@@ -68,7 +68,7 @@ export default function SpendingPieChart() {
               className="w-2 h-2 rounded-full"
               style={{ backgroundColor: COLORS[i % COLORS.length] }}
             />
-            <span className={isDark ? 'text-terminal-muted' : 'text-light-muted'}>
+            <span className={isDark ? 'text-z-muted' : 'text-zl-muted'}>
               {entry.name}
             </span>
           </div>

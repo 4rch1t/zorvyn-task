@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useStore } from '../store/useStore'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
@@ -39,7 +39,6 @@ export default function KeyboardShortcuts() {
     { keys: ['N'], desc: 'New transaction (admin)' },
   ]
 
-  // Global keyboard navigation
   useEffect(() => {
     const { setActivePage, toggleTheme, openModal, role } = useStore.getState()
 
@@ -79,40 +78,36 @@ export default function KeyboardShortcuts() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className={`fixed top-[15%] left-1/2 -translate-x-1/2 z-[101] w-full max-w-md rounded-lg border overflow-hidden shadow-2xl ${
-              isDark
-                ? 'bg-terminal-surface border-terminal-border'
-                : 'bg-light-surface border-light-border'
-            }`}
+            className="fixed top-[15%] left-1/2 -translate-x-1/2 z-[101] w-full max-w-md rounded-2xl overflow-hidden shadow-2xl glass glass-strong"
           >
-            <div className={`flex items-center justify-between px-4 py-3 border-b ${
-              isDark ? 'border-terminal-border' : 'border-light-border'
+            <div className={`flex items-center justify-between px-5 py-3 border-b ${
+              isDark ? 'border-white/[0.06]' : 'border-black/[0.06]'
             }`}>
-              <h2 className={`text-sm font-mono uppercase tracking-wider ${
-                isDark ? 'text-terminal-text' : 'text-light-text'
+              <h2 className={`text-sm font-bold uppercase tracking-widest ${
+                isDark ? 'text-z-text' : 'text-zl-text'
               }`}>
                 Keyboard Shortcuts
               </h2>
-              <button onClick={() => setOpen(false)} className={`p-1 rounded ${
-                isDark ? 'text-terminal-muted hover:text-terminal-text' : 'text-light-muted hover:text-light-text'
+              <button onClick={() => setOpen(false)} className={`p-1.5 rounded-lg transition-colors ${
+                isDark ? 'text-z-muted hover:text-z-text hover:bg-white/5' : 'text-zl-muted hover:text-zl-text hover:bg-black/5'
               }`}>
                 <X size={16} />
               </button>
             </div>
-            <div className="p-4 space-y-2">
+            <div className="p-5 space-y-2">
               {shortcuts.map((s) => (
-                <div key={s.desc} className="flex items-center justify-between py-1">
-                  <span className={`text-sm ${isDark ? 'text-terminal-text' : 'text-light-text'}`}>
+                <div key={s.desc} className="flex items-center justify-between py-1.5">
+                  <span className={`text-sm ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
                     {s.desc}
                   </span>
                   <div className="flex items-center gap-1">
                     {s.keys.map((k) => (
                       <kbd
                         key={k}
-                        className={`text-[11px] font-mono px-2 py-0.5 rounded border min-w-[24px] text-center ${
+                        className={`text-[11px] font-mono px-2 py-0.5 rounded-lg border min-w-[24px] text-center ${
                           isDark
-                            ? 'bg-terminal-card border-terminal-border text-terminal-muted'
-                            : 'bg-light-bg border-light-border text-light-muted'
+                            ? 'bg-white/[0.04] border-white/[0.07] text-z-muted'
+                            : 'bg-black/[0.03] border-black/[0.07] text-zl-muted'
                         }`}
                       >
                         {k}

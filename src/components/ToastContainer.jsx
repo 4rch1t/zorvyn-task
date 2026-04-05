@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+﻿import { create } from 'zustand'
 
 const useToastStore = create((set, get) => ({
   toasts: [],
@@ -27,11 +27,18 @@ const icons = {
   error: AlertTriangle,
 }
 
-const accents = {
-  success: { dark: 'border-terminal-accent text-terminal-accent', light: 'border-light-accent text-light-accent' },
-  warning: { dark: 'border-terminal-amber text-terminal-amber', light: 'border-light-amber text-light-amber' },
-  info: { dark: 'border-terminal-blue text-terminal-blue', light: 'border-light-blue text-light-blue' },
-  error: { dark: 'border-terminal-red text-terminal-red', light: 'border-light-red text-light-red' },
+const accentsDark = {
+  success: 'border-z-green text-z-green',
+  warning: 'border-z-amber text-z-amber',
+  info: 'border-z-blue text-z-blue',
+  error: 'border-z-red text-z-red',
+}
+
+const accentsLight = {
+  success: 'border-zl-green text-zl-green',
+  warning: 'border-zl-amber text-zl-amber',
+  info: 'border-zl-blue text-zl-blue',
+  error: 'border-zl-red text-zl-red',
 }
 
 export default function ToastContainer() {
@@ -44,7 +51,9 @@ export default function ToastContainer() {
       <AnimatePresence>
         {toasts.map((toast) => {
           const Icon = icons[toast.type] || Info
-          const accent = accents[toast.type] || accents.info
+          const accent = isDark
+            ? (accentsDark[toast.type] || accentsDark.info)
+            : (accentsLight[toast.type] || accentsLight.info)
           return (
             <motion.div
               key={toast.id}
@@ -52,19 +61,15 @@ export default function ToastContainer() {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 80, scale: 0.9 }}
               transition={{ duration: 0.2 }}
-              className={`flex items-start gap-3 px-4 py-3 rounded-lg border-l-4 shadow-lg ${
-                isDark
-                  ? `bg-terminal-card ${accent.dark}`
-                  : `bg-light-card ${accent.light}`
-              }`}
+              className={`flex items-start gap-3 px-4 py-3 rounded-xl border-l-4 shadow-lg glass glass-strong ${accent}`}
             >
               <Icon size={16} className="mt-0.5 shrink-0" />
-              <p className={`text-sm flex-1 ${isDark ? 'text-terminal-text' : 'text-light-text'}`}>
+              <p className={`text-sm flex-1 ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
                 {toast.message}
               </p>
               <button
                 onClick={() => removeToast(toast.id)}
-                className={`shrink-0 ${isDark ? 'text-terminal-muted hover:text-terminal-text' : 'text-light-muted hover:text-light-text'}`}
+                className={`shrink-0 ${isDark ? 'text-z-muted hover:text-z-text' : 'text-zl-muted hover:text-zl-text'}`}
               >
                 <X size={14} />
               </button>
