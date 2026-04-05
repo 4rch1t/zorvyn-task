@@ -11,21 +11,17 @@ export default function KeyboardShortcuts() {
   useEffect(() => {
     const openHandler = () => setOpen(true)
     window.addEventListener('centra:shortcuts', openHandler)
-
     const keyHandler = (e) => {
       if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
         const tag = document.activeElement?.tagName
         if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
         e.preventDefault()
-        setOpen((prev) => !prev)
+        setOpen((p) => !p)
       }
       if (e.key === 'Escape') setOpen(false)
     }
     window.addEventListener('keydown', keyHandler)
-    return () => {
-      window.removeEventListener('centra:shortcuts', openHandler)
-      window.removeEventListener('keydown', keyHandler)
-    }
+    return () => { window.removeEventListener('centra:shortcuts', openHandler); window.removeEventListener('keydown', keyHandler) }
   }, [])
 
   const shortcuts = [
@@ -41,21 +37,17 @@ export default function KeyboardShortcuts() {
 
   useEffect(() => {
     const { setActivePage, toggleTheme, openModal, role } = useStore.getState()
-
     const handler = (e) => {
       const tag = document.activeElement?.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
       if (e.ctrlKey || e.metaKey || e.altKey) return
-
       switch (e.key) {
         case '1': setActivePage('dashboard'); break
         case '2': setActivePage('transactions'); break
         case '3': setActivePage('insights'); break
         case '4': setActivePage('goals'); break
         case 'd': case 'D': toggleTheme(); break
-        case 'n': case 'N':
-          if (role === 'admin') openModal()
-          break
+        case 'n': case 'N': if (role === 'admin') openModal(); break
       }
     }
     window.addEventListener('keydown', handler)
@@ -66,52 +58,32 @@ export default function KeyboardShortcuts() {
     <AnimatePresence>
       {open && (
         <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
-            onClick={() => setOpen(false)}
-          />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className="fixed top-[15%] left-1/2 -translate-x-1/2 z-[101] w-full max-w-md rounded-2xl overflow-hidden shadow-2xl glass glass-strong"
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            className="fixed top-[15%] left-1/2 -translate-x-1/2 z-[101] w-full max-w-md glass-strong glass overflow-hidden shadow-2xl"
           >
-            <div className={`flex items-center justify-between px-5 py-3 border-b ${
-              isDark ? 'border-white/[0.06]' : 'border-black/[0.06]'
-            }`}>
-              <h2 className={`text-sm font-bold uppercase tracking-widest ${
-                isDark ? 'text-z-text' : 'text-zl-text'
-              }`}>
+            <div className={`flex items-center justify-between px-5 py-3 border-b ${isDark ? 'border-white/[0.06]' : 'border-black/[0.06]'}`}>
+              <h2 className={`text-sm font-display font-bold uppercase tracking-[0.1em] ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
                 Keyboard Shortcuts
               </h2>
               <button onClick={() => setOpen(false)} className={`p-1.5 rounded-lg transition-colors ${
                 isDark ? 'text-z-muted hover:text-z-text hover:bg-white/5' : 'text-zl-muted hover:text-zl-text hover:bg-black/5'
-              }`}>
-                <X size={16} />
-              </button>
+              }`}><X size={16} /></button>
             </div>
             <div className="p-5 space-y-2">
               {shortcuts.map((s) => (
                 <div key={s.desc} className="flex items-center justify-between py-1.5">
-                  <span className={`text-sm ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
-                    {s.desc}
-                  </span>
+                  <span className={`text-sm ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>{s.desc}</span>
                   <div className="flex items-center gap-1">
                     {s.keys.map((k) => (
-                      <kbd
-                        key={k}
-                        className={`text-[11px] font-mono px-2 py-0.5 rounded-lg border min-w-[24px] text-center ${
-                          isDark
-                            ? 'bg-white/[0.04] border-white/[0.07] text-z-muted'
-                            : 'bg-black/[0.03] border-black/[0.07] text-zl-muted'
-                        }`}
-                      >
-                        {k}
-                      </kbd>
+                      <kbd key={k} className={`text-[11px] font-mono min-w-[24px] text-center px-1.5 py-0.5 rounded-md border ${
+                        isDark ? 'bg-z-elevated border-z-border text-z-muted' : 'bg-zl-elevated border-zl-border text-zl-muted'
+                      }`}>{k}</kbd>
                     ))}
                   </div>
                 </div>

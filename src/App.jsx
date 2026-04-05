@@ -17,24 +17,24 @@ const pages = {
   goals: Goals,
 }
 
+const pageTransition = {
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+  exit: { opacity: 0, y: -12, transition: { duration: 0.25 } },
+}
+
 export default function App() {
   const { activePage, theme } = useStore()
-  const isDark = theme === 'dark'
   const PageComponent = pages[activePage] || Dashboard
+  const isDark = theme === 'dark'
 
   return (
     <div className={`min-h-screen ${isDark ? 'dark bg-z-bg' : 'light bg-zl-bg'}`}>
       <div className="ambient-bg" />
       <Navbar />
-      <main className="relative z-10 pt-24 pb-16">
+      <main className="relative z-10 pt-20 pb-16">
         <AnimatePresence mode="wait">
-          <motion.div
-            key={activePage}
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
+          <motion.div key={activePage} {...pageTransition}>
             <PageComponent />
           </motion.div>
         </AnimatePresence>

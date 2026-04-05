@@ -6,7 +6,6 @@ import {
   Plus,
   Trash2,
   Calendar,
-  TrendingUp,
   CheckCircle2,
   Pencil,
 } from 'lucide-react'
@@ -16,12 +15,13 @@ function formatCurrency(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n)
 }
 
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
+}
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  show: (i = 0) => ({
-    opacity: 1, y: 0,
-    transition: { duration: 0.5, delay: i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] },
-  }),
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
 }
 
 function ProgressRing({ pct, size = 80, stroke = 5, isDark }) {
@@ -31,20 +31,20 @@ function ProgressRing({ pct, size = 80, stroke = 5, isDark }) {
   const color =
     capped >= 100
       ? isDark ? '#4ade80' : '#16a34a'
-      : capped >= 50
-      ? isDark ? '#fbbf24' : '#d97706'
-      : isDark ? '#6b8db5' : '#4a6580'
+      : isDark ? '#89b4e0' : '#3d7ab5'
 
   return (
     <svg width={size} height={size} className="transform -rotate-90">
       <circle cx={size/2} cy={size/2} r={radius} fill="none"
-        stroke={isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'} strokeWidth={stroke} />
+        stroke={isDark ? '#161d2e' : '#f8f8f5'} strokeWidth={stroke} />
       <motion.circle cx={size/2} cy={size/2} r={radius} fill="none"
         stroke={color} strokeWidth={stroke} strokeLinecap="round"
         strokeDasharray={circ}
         initial={{ strokeDashoffset: circ }}
         animate={{ strokeDashoffset: circ - (circ * capped) / 100 }}
-        transition={{ duration: 1, ease: 'easeOut' }} />
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        style={{ filter: `drop-shadow(0 0 6px ${color}99)` }}
+      />
     </svg>
   )
 }
@@ -92,36 +92,27 @@ export default function Goals() {
   const totalSaved = goals.reduce((s, g) => s + Math.min(g.saved, g.target), 0)
   const completedCount = goals.filter((g) => g.saved >= g.target).length
 
-  const inputClass = `w-full mt-1 px-3 py-2.5 rounded-xl text-sm outline-none transition-colors ${
-    isDark ? 'bg-white/[0.03] border border-white/[0.06] text-z-text placeholder:text-z-muted focus:border-z-accent/40'
-           : 'bg-black/[0.02] border border-black/[0.06] text-zl-text placeholder:text-zl-muted focus:border-zl-accent/40'
-  }`
-
   return (
-    <div>
+    <motion.div initial="hidden" animate="show" variants={stagger}>
       {/* Hero */}
       <section className="px-6 md:px-10 lg:px-16 mb-12">
-        <motion.p variants={fadeUp} custom={0} initial="hidden" animate="show"
-          className={`text-sm tracking-wide mb-4 flex items-center gap-2 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-          <span className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-z-green' : 'bg-zl-green'}`} />
-          Targets
+        <motion.p variants={fadeUp} className={`text-lg mb-4 ${isDark ? 'text-z-text-secondary' : 'text-zl-text-secondary'}`}>
+          Track your <span className="accent-word">savings</span> targets.
         </motion.p>
-        <motion.div variants={fadeUp} custom={1} initial="hidden" animate="show" className="flex items-end justify-between flex-wrap gap-4">
-          <h1 className={`text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
-            Savings Goals
+        <motion.div variants={fadeUp} className="flex items-end justify-between flex-wrap gap-4">
+          <h1 className={`font-display font-[800] text-4xl sm:text-5xl md:text-6xl tracking-[-0.03em] ${isDark ? 'text-z-text' : 'text-zl-text'}`}>
+            Goals
           </h1>
           {isAdmin && (
-            <button onClick={openNew} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-              isDark ? 'bg-z-accent/15 text-z-accent hover:bg-z-accent/25' : 'bg-zl-accent/10 text-zl-accent hover:bg-zl-accent/20'
-            }`}>
-              <Plus size={16} /> New Goal
+            <button onClick={openNew} className="pill-filled flex items-center gap-2 px-5 py-2.5 text-sm">
+              <Plus size={15} /> New Goal
             </button>
           )}
         </motion.div>
       </section>
 
-      {/* Summary stat strip */}
-      <motion.section variants={fadeUp} custom={2} initial="hidden" animate="show" className="px-6 md:px-10 lg:px-16 mb-14">
+      {/* Stat strip */}
+      <motion.section variants={fadeUp} className="px-6 md:px-10 lg:px-16 mb-14">
         <div className="glass rounded-2xl overflow-hidden">
           <div className="grid grid-cols-3">
             {[
@@ -129,10 +120,9 @@ export default function Goals() {
               { label: 'Total Saved', value: formatCurrency(totalSaved) },
               { label: 'Completed', value: `${completedCount} / ${goals.length}` },
             ].map((item) => (
-              <div key={item.label} className="stat-card px-6 py-7">
-                <p className={`text-xl md:text-2xl font-bold font-mono tracking-tight mb-3 ${isDark ? 'text-z-text' : 'text-zl-text'}`}>{item.value}</p>
-                <div className={`w-6 h-px mb-2 ${isDark ? 'bg-white/10' : 'bg-black/10'}`} />
-                <p className={`text-xs ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>{item.label}</p>
+              <div key={item.label} className="stat-card px-5 py-6 md:px-6 md:py-7">
+                <p className={`font-mono text-xl md:text-2xl font-semibold tracking-tight mb-2 ${isDark ? 'text-z-text' : 'text-zl-text'}`}>{item.value}</p>
+                <p className={`text-[10px] uppercase tracking-[0.15em] ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>{item.label}</p>
               </div>
             ))}
           </div>
@@ -143,7 +133,7 @@ export default function Goals() {
       <section className="px-6 md:px-10 lg:px-16 mb-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <AnimatePresence>
-            {goals.map((goal, i) => {
+            {goals.map((goal) => {
               const pct = goal.target > 0 ? (goal.saved / goal.target) * 100 : 0
               const done = pct >= 100
               const remaining = Math.max(0, goal.target - goal.saved)
@@ -151,7 +141,8 @@ export default function Goals() {
               const daysLeft = deadlineDate ? Math.ceil((deadlineDate - new Date()) / 86400000) : null
               return (
                 <motion.div key={goal.id} layout
-                  initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
+                  variants={fadeUp}
+                  exit={{ opacity: 0, scale: 0.95 }}
                   className="glass card-lift rounded-2xl p-6"
                 >
                   <div className="flex items-start gap-4">
@@ -160,13 +151,13 @@ export default function Goals() {
                       <div className="absolute inset-0 flex items-center justify-center">
                         {done
                           ? <CheckCircle2 size={18} className={isDark ? 'text-z-green' : 'text-zl-green'} />
-                          : <span className={`text-base font-mono font-bold ${isDark ? 'text-z-text' : 'text-zl-text'}`}>{Math.round(pct)}%</span>}
+                          : <span className={`text-sm font-mono font-bold ${isDark ? 'text-z-text' : 'text-zl-text'}`}>{Math.round(pct)}%</span>}
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">{goal.icon}</span>
-                        <h3 className={`font-semibold truncate ${isDark ? 'text-z-text' : 'text-zl-text'}`}>{goal.name}</h3>
+                        <h3 className={`font-display font-bold truncate ${isDark ? 'text-z-text' : 'text-zl-text'}`}>{goal.name}</h3>
                       </div>
                       <p className={`text-sm mt-1 font-mono ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
                         {formatCurrency(goal.saved)} / {formatCurrency(goal.target)}
@@ -174,17 +165,19 @@ export default function Goals() {
                       {!done && remaining > 0 && <p className={`text-xs mt-1 ${isDark ? 'text-z-muted/60' : 'text-zl-muted/60'}`}>{formatCurrency(remaining)} to go</p>}
                       {done && <p className={`text-xs mt-1 font-medium ${isDark ? 'text-z-green' : 'text-zl-green'}`}>Goal reached!</p>}
                       {deadlineDate && (
-                        <div className={`flex items-center gap-1 mt-2 text-xs ${
-                          daysLeft !== null && daysLeft < 30 ? isDark ? 'text-z-amber' : 'text-zl-amber' : isDark ? 'text-z-muted' : 'text-zl-muted'
+                        <div className={`inline-flex items-center gap-1 mt-2 text-[11px] font-mono px-2 py-0.5 rounded-full ${
+                          daysLeft !== null && daysLeft < 30
+                            ? isDark ? 'bg-z-amber/10 text-z-amber border border-z-amber/20' : 'bg-zl-amber/10 text-zl-amber border border-zl-amber/20'
+                            : isDark ? 'bg-z-elevated text-z-muted border border-z-border' : 'bg-zl-elevated text-zl-muted border border-zl-border'
                         }`}>
-                          <Calendar size={12} />
-                          {daysLeft > 0 ? `${daysLeft} days left` : daysLeft === 0 ? 'Due today' : 'Past deadline'}
+                          <Calendar size={10} />
+                          {daysLeft > 0 ? `${daysLeft}d left` : daysLeft === 0 ? 'Due today' : 'Past due'}
                         </div>
                       )}
                     </div>
                     {isAdmin && (
                       <div className="flex flex-col gap-1 shrink-0">
-                        <button onClick={() => openEdit(goal)} className={`p-1.5 rounded-lg transition-colors ${isDark ? 'text-z-muted hover:text-z-blue hover:bg-white/5' : 'text-zl-muted hover:text-zl-blue hover:bg-black/5'}`}><Pencil size={14} /></button>
+                        <button onClick={() => openEdit(goal)} className={`p-1.5 rounded-lg transition-colors ${isDark ? 'text-z-muted hover:text-z-accent-bright hover:bg-white/5' : 'text-zl-muted hover:text-zl-accent-bright hover:bg-black/5'}`}><Pencil size={14} /></button>
                         <button onClick={() => deleteGoal(goal.id)} className={`p-1.5 rounded-lg transition-colors ${isDark ? 'text-z-muted hover:text-z-red hover:bg-white/5' : 'text-zl-muted hover:text-zl-red hover:bg-black/5'}`}><Trash2 size={14} /></button>
                       </div>
                     )}
@@ -207,50 +200,51 @@ export default function Goals() {
         {showForm && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-sm" onClick={() => setShowForm(false)} />
+              className="fixed inset-0 z-[90] bg-black/60 backdrop-blur-sm" onClick={() => setShowForm(false)} />
             <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 20 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[91] w-full max-w-md rounded-2xl p-6 shadow-2xl glass glass-strong"
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[91] w-full max-w-md glass-strong glass p-6 shadow-2xl"
             >
-              <h2 className={`text-lg font-bold mb-5 ${isDark ? 'text-z-text' : 'text-zl-text'}`}>{editId ? 'Edit Goal' : 'New Goal'}</h2>
+              <h2 className={`text-lg font-display font-bold mb-5 ${isDark ? 'text-z-text' : 'text-zl-text'}`}>{editId ? 'Edit Goal' : 'New Goal'}</h2>
               <div className="space-y-3">
                 <div className="flex gap-3">
                   <div className="w-16">
-                    <label className={`text-xs ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>Icon</label>
-                    <input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} className={`${inputClass} text-center text-lg`} />
+                    <label className={`text-[10px] uppercase tracking-[0.15em] ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>Icon</label>
+                    <input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} className="input-field w-full mt-1 px-3 py-2.5 text-center text-lg" />
                   </div>
                   <div className="flex-1">
-                    <label className={`text-xs ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>Name</label>
-                    <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Vacation Fund" className={inputClass} />
+                    <label className={`text-[10px] uppercase tracking-[0.15em] ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>Name</label>
+                    <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Vacation Fund" className="input-field w-full mt-1 px-3 py-2.5 text-sm" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className={`text-xs ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>Target ($)</label>
-                    <input type="number" min="0" value={form.target} onChange={(e) => setForm({ ...form, target: e.target.value })} className={`${inputClass} font-mono`} />
+                    <label className={`text-[10px] uppercase tracking-[0.15em] ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>Target ($)</label>
+                    <input type="number" min="0" value={form.target} onChange={(e) => setForm({ ...form, target: e.target.value })} className="input-field w-full mt-1 px-3 py-2.5 text-sm font-mono" />
                   </div>
                   <div>
-                    <label className={`text-xs ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>Saved ($)</label>
-                    <input type="number" min="0" value={form.saved} onChange={(e) => setForm({ ...form, saved: e.target.value })} className={`${inputClass} font-mono`} />
+                    <label className={`text-[10px] uppercase tracking-[0.15em] ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>Saved ($)</label>
+                    <input type="number" min="0" value={form.saved} onChange={(e) => setForm({ ...form, saved: e.target.value })} className="input-field w-full mt-1 px-3 py-2.5 text-sm font-mono" />
                   </div>
                 </div>
                 <div>
-                  <label className={`text-xs ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>Target Date</label>
-                  <input type="date" value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} className={inputClass} />
+                  <label className={`text-[10px] uppercase tracking-[0.15em] ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>Target Date</label>
+                  <input type="date" value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} className="input-field w-full mt-1 px-3 py-2.5 text-sm" />
                 </div>
               </div>
               <div className="flex gap-3 mt-5">
                 <button onClick={() => setShowForm(false)} className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  isDark ? 'bg-white/[0.03] text-z-muted hover:text-z-text' : 'bg-black/[0.03] text-zl-muted hover:text-zl-text'
+                  isDark ? 'bg-z-elevated text-z-muted hover:text-z-text' : 'bg-zl-elevated text-zl-muted hover:text-zl-text'
                 }`}>Cancel</button>
-                <button onClick={submitForm} className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  isDark ? 'bg-z-accent/15 text-z-accent hover:bg-z-accent/25' : 'bg-zl-accent/10 text-zl-accent hover:bg-zl-accent/20'
-                }`}>{editId ? 'Save' : 'Create'}</button>
+                <button onClick={submitForm} className="pill-filled flex-1 py-2.5 text-sm">{editId ? 'Save' : 'Create'}</button>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   )
 }

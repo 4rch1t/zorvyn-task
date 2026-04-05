@@ -20,23 +20,12 @@ export default function CommandPalette() {
   const [selected, setSelected] = useState(0)
   const inputRef = useRef(null)
 
-  const {
-    setActivePage,
-    toggleTheme,
-    theme,
-    role,
-    openModal,
-    resetTransactions,
-  } = useStore()
-
+  const { setActivePage, toggleTheme, theme, role, openModal, resetTransactions } = useStore()
   const isDark = theme === 'dark'
 
   useEffect(() => {
     const handler = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault()
-        setOpen((prev) => !prev)
-      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); setOpen((p) => !p) }
       if (e.key === 'Escape') setOpen(false)
     }
     window.addEventListener('keydown', handler)
@@ -44,11 +33,7 @@ export default function CommandPalette() {
   }, [])
 
   useEffect(() => {
-    if (open) {
-      setQuery('')
-      setSelected(0)
-      setTimeout(() => inputRef.current?.focus(), 50)
-    }
+    if (open) { setQuery(''); setSelected(0); setTimeout(() => inputRef.current?.focus(), 50) }
   }, [open])
 
   const commands = useMemo(() => {
@@ -72,38 +57,24 @@ export default function CommandPalette() {
   const filtered = useMemo(() => {
     if (!query.trim()) return commands
     const q = query.toLowerCase()
-    return commands.filter(
-      (c) => c.label.toLowerCase().includes(q) || c.group.toLowerCase().includes(q)
-    )
+    return commands.filter((c) => c.label.toLowerCase().includes(q) || c.group.toLowerCase().includes(q))
   }, [query, commands])
 
   useEffect(() => {
     if (selected >= filtered.length) setSelected(Math.max(0, filtered.length - 1))
   }, [filtered.length, selected])
 
-  const run = (cmd) => {
-    cmd.action()
-    setOpen(false)
-  }
+  const run = (cmd) => { cmd.action(); setOpen(false) }
 
   const handleKeyDown = (e) => {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault()
-      setSelected((s) => (s + 1) % filtered.length)
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault()
-      setSelected((s) => (s - 1 + filtered.length) % filtered.length)
-    } else if (e.key === 'Enter' && filtered[selected]) {
-      run(filtered[selected])
-    }
+    if (e.key === 'ArrowDown') { e.preventDefault(); setSelected((s) => (s + 1) % filtered.length) }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setSelected((s) => (s - 1 + filtered.length) % filtered.length) }
+    else if (e.key === 'Enter' && filtered[selected]) run(filtered[selected])
   }
 
   const grouped = useMemo(() => {
     const groups = {}
-    filtered.forEach((c) => {
-      if (!groups[c.group]) groups[c.group] = []
-      groups[c.group].push(c)
-    })
+    filtered.forEach((c) => { if (!groups[c.group]) groups[c.group] = []; groups[c.group].push(c) })
     return groups
   }, [filtered])
 
@@ -113,75 +84,46 @@ export default function CommandPalette() {
     <AnimatePresence>
       {open && (
         <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
-            onClick={() => setOpen(false)}
-          />
+          {/* Full-screen overlay */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
 
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            transition={{ duration: 0.15 }}
-            className="fixed top-[20%] left-1/2 -translate-x-1/2 z-[101] w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl glass glass-strong"
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            className="fixed top-[20%] left-1/2 -translate-x-1/2 z-[101] w-full max-w-lg glass-strong glass overflow-hidden shadow-2xl"
           >
-            <div className={`flex items-center gap-3 px-4 py-3 border-b ${
-              isDark ? 'border-white/[0.06]' : 'border-black/[0.06]'
-            }`}>
+            <div className={`flex items-center gap-3 px-4 py-3 border-b ${isDark ? 'border-white/[0.06]' : 'border-black/[0.06]'}`}>
               <Search size={16} className={isDark ? 'text-z-muted' : 'text-zl-muted'} />
-              <input
-                ref={inputRef}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={handleKeyDown}
+              <input ref={inputRef} value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={handleKeyDown}
                 placeholder="Type a command\u2026"
-                className={`flex-1 bg-transparent outline-none text-sm ${
-                  isDark ? 'text-z-text placeholder:text-z-muted' : 'text-zl-text placeholder:text-zl-muted'
-                }`}
+                className={`flex-1 bg-transparent outline-none text-sm ${isDark ? 'text-z-text placeholder:text-z-muted' : 'text-zl-text placeholder:text-zl-muted'}`}
               />
-              <kbd className={`text-[10px] font-mono px-1.5 py-0.5 rounded-lg border ${
-                isDark
-                  ? 'bg-white/[0.04] border-white/[0.07] text-z-muted'
-                  : 'bg-black/[0.03] border-black/[0.07] text-zl-muted'
-              }`}>
-                ESC
-              </kbd>
+              <kbd className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md border ${
+                isDark ? 'bg-z-elevated border-z-border text-z-muted' : 'bg-zl-elevated border-zl-border text-zl-muted'
+              }`}>ESC</kbd>
             </div>
 
             <div className="max-h-72 overflow-y-auto py-2">
               {filtered.length === 0 && (
-                <p className={`text-sm text-center py-6 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>
-                  No results found.
-                </p>
+                <p className={`text-sm text-center py-6 ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>No results found.</p>
               )}
               {Object.entries(grouped).map(([group, items]) => (
                 <div key={group}>
-                  <p className={`px-4 py-1 text-[10px] uppercase tracking-widest font-medium ${
-                    isDark ? 'text-z-muted' : 'text-zl-muted'
-                  }`}>
-                    {group}
-                  </p>
+                  <p className={`px-4 py-1 text-[10px] uppercase tracking-[0.15em] font-medium ${isDark ? 'text-z-muted' : 'text-zl-muted'}`}>{group}</p>
                   {items.map((cmd) => {
                     flatIndex++
                     const idx = flatIndex
                     const Icon = cmd.icon
                     const isSelected = idx === selected
                     return (
-                      <button
-                        key={cmd.id}
-                        onClick={() => run(cmd)}
-                        onMouseEnter={() => setSelected(idx)}
-                        className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
+                      <button key={cmd.id} onClick={() => run(cmd)} onMouseEnter={() => setSelected(idx)}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all ${
                           isSelected
-                            ? isDark
-                              ? 'bg-z-accent/10 text-z-accent'
-                              : 'bg-zl-accent/10 text-zl-accent'
-                            : isDark
-                            ? 'text-z-text hover:bg-white/[0.03]'
-                            : 'text-zl-text hover:bg-black/[0.03]'
+                            ? `${isDark ? 'bg-z-accent-glow text-z-accent-bright' : 'bg-zl-accent/10 text-zl-accent-bright'} border-l-2 ${isDark ? 'border-z-accent-bright' : 'border-zl-accent-bright'}`
+                            : `border-l-2 border-transparent ${isDark ? 'text-z-text-secondary hover:bg-white/[0.02]' : 'text-zl-text-secondary hover:bg-black/[0.02]'}`
                         }`}
                       >
                         <Icon size={15} className={isSelected ? '' : isDark ? 'text-z-muted' : 'text-zl-muted'} />
@@ -196,8 +138,8 @@ export default function CommandPalette() {
             <div className={`flex items-center gap-4 px-4 py-2 text-[10px] font-mono border-t ${
               isDark ? 'border-white/[0.06] text-z-muted' : 'border-black/[0.06] text-zl-muted'
             }`}>
-              <span>\u2191\u2193 navigate</span>
-              <span>\u21B5 select</span>
+              <span>{'\u2191\u2193'} navigate</span>
+              <span>{'\u21B5'} select</span>
               <span>esc close</span>
             </div>
           </motion.div>
